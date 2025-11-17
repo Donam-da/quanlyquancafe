@@ -7,9 +7,9 @@
              mc:Ignorable="d" 
              d:DesignHeight="550" d:DesignWidth="1000"
              Loaded="UserControl_Loaded">
+    <!-- Layout chính, chia giao diện thành 2 cột. -->
     <Grid Margin="10">
-        <Grid.Resources>
-            <!-- Style để căn giữa nội dung và tiêu đề của các cột trong DataGrid -->
+        <Grid.Resources> <!-- Định nghĩa các style để căn giữa nội dung trong DataGrid. -->
             <Style x:Key="CenterAlignedColumn" TargetType="DataGridColumnHeader">
                 <Setter Property="HorizontalContentAlignment" Value="Center"/>
             </Style>
@@ -17,59 +17,63 @@
                 <Setter Property="HorizontalAlignment" Value="Center"/>
             </Style>
         </Grid.Resources>
+        <!-- Chia giao diện thành 2 cột: cột trái chiếm phần lớn không gian, cột phải rộng 350. -->
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="350"/>
         </Grid.ColumnDefinitions>
 
-        <!-- Cột 1: Danh sách nhân viên -->
+        <!-- Cột 0 (bên trái): Chứa danh sách các nhân viên. -->
         <DockPanel Grid.Column="0" Margin="0,0,10,0">
             <TextBlock DockPanel.Dock="Top" Text="DANH SÁCH NHÂN VIÊN" FontSize="18" FontWeight="Bold" Margin="0,0,0,10"/>
+            <!-- Bảng (DataGrid) hiển thị danh sách nhân viên. -->
             <DataGrid x:Name="dgAccounts" AutoGenerateColumns="False" IsReadOnly="True"                      
                       SelectionMode="Single" SelectionChanged="DgAccounts_SelectionChanged" 
-                      LoadingRow="DgAccounts_LoadingRow">
+                      LoadingRow="DgAccounts_LoadingRow"> <!-- Sự kiện được gọi khi chọn dòng và khi tải dòng. -->
+                <!-- Định nghĩa các cột sẽ hiển thị trong DataGrid. -->
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="STT" Binding="{Binding STT}" Width="50" HeaderStyle="{StaticResource CenterAlignedColumn}" ElementStyle="{StaticResource CenterAlignedCell}" />
                     <DataGridTextColumn Header="Tên đăng nhập" Binding="{Binding UserName}" Width="120" HeaderStyle="{StaticResource CenterAlignedColumn}" ElementStyle="{StaticResource CenterAlignedCell}" />
                     <DataGridTextColumn Header="Tên hiển thị" Binding="{Binding DisplayName}" Width="150" HeaderStyle="{StaticResource CenterAlignedColumn}" ElementStyle="{StaticResource CenterAlignedCell}" />
-                    <DataGridTextColumn Header="Mật khẩu" Binding="{Binding Password}" Width="100" HeaderStyle="{StaticResource CenterAlignedColumn}" ElementStyle="{StaticResource CenterAlignedCell}" />
+                    <DataGridTextColumn Header="Mật khẩu" Binding="{Binding Password}" Width="100" HeaderStyle="{StaticResource CenterAlignedColumn}" ElementStyle="{StaticResource CenterAlignedCell}" /> <!-- Cảnh báo: Hiển thị mật khẩu dạng plain text là không an toàn. -->
                     <DataGridTextColumn Header="Số điện thoại" Binding="{Binding PhoneNumber}" Width="110" HeaderStyle="{StaticResource CenterAlignedColumn}" ElementStyle="{StaticResource CenterAlignedCell}" />
                     <DataGridTextColumn Header="Địa chỉ" Binding="{Binding Address}" Width="*" HeaderStyle="{StaticResource CenterAlignedColumn}" ElementStyle="{StaticResource CenterAlignedCell}" />
                 </DataGrid.Columns>
             </DataGrid>
         </DockPanel>
 
-        <!-- Cột 2: Thông tin chi tiết và chức năng -->
+        <!-- Cột 1 (bên phải): Chứa form thông tin chi tiết và các nút chức năng. -->
         <DockPanel Grid.Column="1">
             <TextBlock DockPanel.Dock="Top" Text="THÔNG TIN CHI TIẾT" FontSize="18" FontWeight="Bold" Margin="0,0,0,10"/>
             <StackPanel>
                 <TextBlock Text="Tên hiển thị:" Margin="0,5,0,2"/>
-                <TextBox x:Name="txtDisplayName" Padding="5"/>
+                <TextBox x:Name="txtDisplayName" Padding="5"/> <!-- Ô nhập tên hiển thị. -->
 
                 <TextBlock Text="Tên đăng nhập:" Margin="0,10,0,2"/>
-                <TextBox x:Name="txtUserName" Padding="5"/>
+                <TextBox x:Name="txtUserName" Padding="5"/> <!-- Ô nhập tên đăng nhập. -->
 
                 <TextBlock Text="Mật khẩu:" Margin="0,10,0,2"/>
-                <TextBox x:Name="txtPassword" Padding="5"/>
+                <TextBox x:Name="txtPassword" Padding="5"/> <!-- Ô nhập mật khẩu. Cảnh báo: Không nên dùng TextBox cho mật khẩu. -->
 
                 <TextBlock Text="Số điện thoại:" Margin="0,10,0,2"/>
-                <TextBox x:Name="txtPhoneNumber" Padding="5"/>
+                <TextBox x:Name="txtPhoneNumber" Padding="5"/> <!-- Ô nhập số điện thoại. -->
 
                 <TextBlock Text="Địa chỉ:" Margin="0,10,0,2"/>
-                <TextBox x:Name="txtAddress" Padding="5"/>
+                <TextBox x:Name="txtAddress" Padding="5"/> <!-- Ô nhập địa chỉ. -->
 
                 <TextBlock Text="Loại tài khoản:" Margin="0,10,0,2"/>
-                <ComboBox x:Name="cbAccountType" Padding="5">
+                <ComboBox x:Name="cbAccountType" Padding="5"> <!-- ComboBox để chọn loại tài khoản. -->
                     <ComboBoxItem Content="Nhân viên" Tag="0"/>
                     <ComboBoxItem Content="Admin" Tag="1"/>
                 </ComboBox>
 
+                <!-- Chứa các nút Thêm, Sửa, Xóa. -->
                 <WrapPanel HorizontalAlignment="Center" Margin="0,20,0,0">
-                    <Button x:Name="btnAdd" Content="Thêm" Width="80" Margin="5" Click="BtnAdd_Click"/>
-                    <Button x:Name="btnEdit" Content="Sửa" Width="80" Margin="5" Click="BtnEdit_Click"/>
-                    <Button x:Name="btnDelete" Content="Xóa" Width="80" Margin="5" Click="BtnDelete_Click"/>
+                    <Button x:Name="btnAdd" Content="Thêm" Width="80" Margin="5" Click="BtnAdd_Click"/> <!-- Nút thêm mới. -->
+                    <Button x:Name="btnEdit" Content="Sửa" Width="80" Margin="5" Click="BtnEdit_Click"/> <!-- Nút sửa thông tin. -->
+                    <Button x:Name="btnDelete" Content="Xóa" Width="80" Margin="5" Click="BtnDelete_Click"/> <!-- Nút xóa. -->
                 </WrapPanel>
-                <Button x:Name="btnReset" Content="Làm mới" Width="80" Margin="5" HorizontalAlignment="Center" Click="BtnReset_Click"/>
+                <Button x:Name="btnReset" Content="Làm mới" Width="80" Margin="5" HorizontalAlignment="Center" Click="BtnReset_Click"/> <!-- Nút để xóa trắng các ô nhập liệu. -->
             </StackPanel>
         </DockPanel>
     </Grid>

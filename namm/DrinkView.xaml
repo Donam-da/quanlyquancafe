@@ -7,7 +7,9 @@
              mc:Ignorable="d" 
              d:DesignHeight="550" d:DesignWidth="1000"
              Loaded="UserControl_Loaded">
+    <!-- Layout chính, chia giao diện thành 2 cột. -->
     <Grid Margin="10">
+        <!-- Định nghĩa các style để căn chỉnh nội dung trong DataGrid. -->
         <Grid.Resources>
             <Style x:Key="CenterHeader" TargetType="DataGridColumnHeader">
                 <Setter Property="HorizontalContentAlignment" Value="Center"/>
@@ -25,20 +27,23 @@
                 <Setter Property="Margin" Value="2,0,2,0"/>
             </Style>
         </Grid.Resources>
+        <!-- Chia giao diện thành 2 cột: cột trái chiếm phần lớn không gian, cột phải rộng 350. -->
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="350"/>
         </Grid.ColumnDefinitions>
 
-        <!-- Cột 1: Danh sách đồ uống -->
+        <!-- Cột 0 (bên trái): Chứa danh sách các đồ uống nguyên bản. -->
         <DockPanel Grid.Column="0" Margin="0,0,10,0">
             <StackPanel DockPanel.Dock="Top" Orientation="Vertical">
                 <TextBlock Text="DANH SÁCH ĐỒ UỐNG NGUYÊN BẢN" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,10"/>
-                <TextBox x:Name="txtSearch" Margin="0,0,0,5" Height="25" ToolTip="Nhập tên đồ uống để tìm kiếm" TextChanged="TxtSearch_TextChanged"/>
+                <TextBox x:Name="txtSearch" Margin="0,0,0,5" Height="25" ToolTip="Nhập tên đồ uống để tìm kiếm" TextChanged="TxtSearch_TextChanged"/> <!-- Ô tìm kiếm. -->
             </StackPanel>
+            <!-- Bảng (DataGrid) hiển thị danh sách đồ uống. -->
             <DataGrid x:Name="dgDrinks" AutoGenerateColumns="False" IsReadOnly="True"                      
                       SelectionMode="Single" SelectionChanged="DgDrinks_SelectionChanged" 
-                      LoadingRow="DgDrinks_LoadingRow">
+                      LoadingRow="DgDrinks_LoadingRow"> <!-- Sự kiện được gọi khi chọn dòng và khi tải dòng. -->
+                <!-- Định nghĩa các cột sẽ hiển thị trong DataGrid. -->
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="STT" Binding="{Binding STT}" Width="0.5*" HeaderStyle="{StaticResource CenterHeader}" ElementStyle="{StaticResource CenterCell}"/>
                     <DataGridTextColumn Header="Tên đồ uống" Binding="{Binding Name}" Width="2.2*" HeaderStyle="{StaticResource CenterHeader}" ElementStyle="{StaticResource CenterCell}"/>
@@ -52,31 +57,32 @@
             </DataGrid>
         </DockPanel>
 
-        <!-- Cột 2: Thông tin chi tiết và chức năng -->
+        <!-- Cột 1 (bên phải): Chứa form thông tin chi tiết và các nút chức năng. -->
         <DockPanel Grid.Column="1">
             <TextBlock DockPanel.Dock="Top" Text="THÔNG TIN CHI TIẾT" FontSize="18" FontWeight="Bold" Margin="0,0,0,10"/>
             <StackPanel>
                 <TextBlock Text="Tên đồ uống:" Margin="0,5,0,2"/>
-                <ComboBox x:Name="cbDrink" Padding="5" DisplayMemberPath="Name" SelectedValuePath="ID" SelectionChanged="CbDrink_SelectionChanged"/>
+                <ComboBox x:Name="cbDrink" Padding="5" DisplayMemberPath="Name" SelectedValuePath="ID" SelectionChanged="CbDrink_SelectionChanged"/> <!-- ComboBox để chọn đồ uống cần gán thuộc tính. -->
 
                 <TextBlock Text="Mã kiểu đồ uống:" Margin="0,10,0,2"/>
-                <TextBox x:Name="txtDrinkCode" Padding="5" IsReadOnly="True" Background="#EEEEEE" ToolTip="Mã này được tạo tự động"/>
+                <TextBox x:Name="txtDrinkCode" Padding="5" IsReadOnly="True" Background="#EEEEEE" ToolTip="Mã này được tạo tự động"/> <!-- Mã được tạo tự động, chỉ đọc. -->
 
                 <TextBlock Text="Giá nhập vào:" Margin="0,10,0,2"/>
-                <TextBox x:Name="txtPrice" Padding="5"/>
+                <TextBox x:Name="txtPrice" Padding="5"/> <!-- Ô nhập giá gốc (giá nhập). -->
 
                 <TextBlock Text="Giá bán thực tế:" Margin="0,10,0,2"/>
-                <TextBox x:Name="txtActualPrice" Padding="5"/>
+                <TextBox x:Name="txtActualPrice" Padding="5"/> <!-- Ô nhập giá bán ra cho khách. -->
 
                 <TextBlock Text="Số lượng tồn kho:" Margin="0,10,0,2"/>
-                <TextBox x:Name="txtStockQuantity" Padding="5"/>
+                <TextBox x:Name="txtStockQuantity" Padding="5"/> <!-- Ô nhập số lượng tồn kho. -->
 
+                <!-- Chứa các nút chức năng: Lưu, Ẩn, Xóa. -->
                 <WrapPanel HorizontalAlignment="Center" Margin="0,20,0,0">
-                    <Button x:Name="btnSave" Content="Lưu" Width="80" Margin="5" Click="BtnSave_Click" IsEnabled="{Binding ElementName=cbDrink, Path=SelectedItem, Converter={StaticResource NullToFalseConverter}}" ToolTip="Lưu thông tin giá và tồn kho cho đồ uống đã chọn."/>
-                    <Button x:Name="btnHide" Content="Ẩn đồ uống" Width="100" Margin="5" Click="BtnHide_Click" IsEnabled="False" Background="#FFC107" Foreground="Black" ToolTip="Ẩn đồ uống này khỏi hệ thống (vẫn giữ lịch sử giao dịch)."/>
-                    <Button x:Name="btnDelete" Content="Xóa" Width="80" Margin="5" Click="BtnDelete_Click" IsEnabled="False" Background="#DC3545" Foreground="White" ToolTip="Xóa vĩnh viễn đồ uống này và các công thức liên quan (chỉ khi không có giao dịch)."/>
+                    <Button x:Name="btnSave" Content="Lưu" Width="80" Margin="5" Click="BtnSave_Click" IsEnabled="{Binding ElementName=cbDrink, Path=SelectedItem, Converter={StaticResource NullToFalseConverter}}" ToolTip="Lưu thông tin giá và tồn kho cho đồ uống đã chọn."/> <!-- Nút Lưu, chỉ bật khi đã chọn đồ uống. -->
+                    <Button x:Name="btnHide" Content="Ẩn đồ uống" Width="100" Margin="5" Click="BtnHide_Click" IsEnabled="False" Background="#FFC107" Foreground="Black" ToolTip="Ẩn đồ uống này khỏi hệ thống (vẫn giữ lịch sử giao dịch)."/> <!-- Nút Ẩn/Hiện. -->
+                    <Button x:Name="btnDelete" Content="Xóa" Width="80" Margin="5" Click="BtnDelete_Click" IsEnabled="False" Background="#DC3545" Foreground="White" ToolTip="Xóa vĩnh viễn đồ uống này và các công thức liên quan (chỉ khi không có giao dịch)."/> <!-- Nút Xóa. -->
                 </WrapPanel>
-                <Button x:Name="btnReset" Content="Làm mới" Width="100" Margin="5" HorizontalAlignment="Center" Click="BtnReset_Click"/>
+                <Button x:Name="btnReset" Content="Làm mới" Width="100" Margin="5" HorizontalAlignment="Center" Click="BtnReset_Click"/> <!-- Nút để xóa trắng các ô nhập liệu. -->
             </StackPanel>
         </DockPanel>
     </Grid>

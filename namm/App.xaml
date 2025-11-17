@@ -1,18 +1,21 @@
-﻿<Application x:Class="namm.App"
+﻿<!-- Đây là file khởi động chính của ứng dụng WPF. -->
+<!-- Nó định nghĩa các tài nguyên toàn cục và cửa sổ sẽ được mở khi ứng dụng bắt đầu. -->
+<Application x:Class="namm.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:namm"
-             StartupUri="MainWindow.xaml">
+             xmlns:local="clr-namespace:namm"  
+             StartupUri="MainWindow.xaml"> <!-- Chỉ định MainWindow.xaml là cửa sổ được mở đầu tiên khi ứng dụng chạy. -->
+    <!-- Nơi định nghĩa các tài nguyên (styles, converters, templates) có thể dùng chung cho toàn bộ ứng dụng. -->
     <Application.Resources>
         <ResourceDictionary>
+            <!-- Một converter có sẵn, dùng để chuyển đổi giá trị true/false sang Visible/Collapsed trong giao diện. -->
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+            <!-- Một converter tự định nghĩa, có thể dùng để chuyển giá trị null thành false (ví dụ: vô hiệu hóa nút khi chưa chọn item). -->
             <local:NullToFalseConverter x:Key="NullToFalseConverter"/>
+            <!-- Gộp các file resource dictionary khác vào đây để quản lý code tốt hơn. -->
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary>
-                    <ResourceDictionary.MergedDictionaries>
-                        <ResourceDictionary Source="LinkButtonStyle.xaml"/>
-                    </ResourceDictionary.MergedDictionaries>
-                </ResourceDictionary>
+                <!-- Tải các style từ file LinkButtonStyle.xaml để sử dụng trong toàn ứng dụng. -->
+                <ResourceDictionary Source="LinkButtonStyle.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

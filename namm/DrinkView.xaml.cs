@@ -1,4 +1,4 @@
-﻿﻿﻿﻿using System;
+﻿﻿﻿﻿﻿﻿using System;
 using System.Configuration;
 using System.Linq;
 using System.Data;
@@ -10,38 +10,43 @@ using System.Windows.Controls;
 
 namespace namm
 {
+    // Lớp xử lý logic cho màn hình quản lý Đồ uống Nguyên bản (DrinkView.xaml).
     public partial class DrinkView : UserControl
     {
+        // Chuỗi kết nối CSDL.
         private string connectionString = ConfigurationManager.ConnectionStrings["CafeDB"].ConnectionString;
+        // Bảng dữ liệu để lưu trữ danh sách đồ uống từ CSDL.
         private DataTable? drinkDataTable;
 
         public DrinkView()
         {
             InitializeComponent();
-            // Đăng ký sự kiện IsVisibleChanged để tải lại dữ liệu mỗi khi view được hiển thị
+            // Đăng ký sự kiện để tải lại dữ liệu mỗi khi view được hiển thị, giúp dữ liệu luôn mới.
             this.IsVisibleChanged += DrinkView_IsVisibleChanged;
         }
 
+        // Hàm này không còn cần thiết vì đã chuyển logic vào IsVisibleChanged.
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            // Không cần tải dữ liệu ở đây nữa vì đã có IsVisibleChanged xử lý
         }
 
+        // Sự kiện được gọi mỗi khi UserControl được hiển thị hoặc ẩn đi.
         private async void DrinkView_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            // Nếu UserControl trở nên sichtbar (visible), tải lại dữ liệu
+            // Nếu UserControl trở nên hiển thị (visible), tải lại dữ liệu.
             if ((bool)e.NewValue)
             {
                 await LoadDataAsync();
             }
         }
 
+        // Hàm tổng hợp để tải tất cả dữ liệu cần thiết cho màn hình.
         private async Task LoadDataAsync()
         {
             try
             {
-                await LoadDrinksToComboBoxAsync();
-                await LoadDrinksAsync();
+                await LoadDrinksToComboBoxAsync(); // Tải danh sách đồ uống vào ComboBox.
+                await LoadDrinksAsync(); // Tải danh sách đồ uống vào DataGrid.
             }
             catch (Exception ex)
             {
@@ -49,23 +54,25 @@ namespace namm
             }
         }
 
+        // Tải danh sách tất cả đồ uống vào ComboBox để người dùng chọn.
         private async Task LoadDrinksToComboBoxAsync()
         {
-            // Lấy cả DrinkCode để hiển thị khi chọn
             const string query = "SELECT ID, Name, DrinkCode FROM Drink ORDER BY Name";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 SqlDataAdapter adapter = new SqlDataAdapter(query, connection);
                 DataTable drinkListTable = new DataTable();
                 await Task.Run(() => adapter.Fill(drinkListTable));
-                cbDrink.ItemsSource = drinkListTable.DefaultView;
+                cbDrink.ItemsSource = drinkListTable.DefaultView; // Gán dữ liệu cho ComboBox.
             }
         }
 
+        // Tải danh sách các đồ uống nguyên bản (có giá nhập hoặc tồn kho) vào DataGrid.
         private async Task LoadDrinksAsync()
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
+                // Câu lệnh SQL để lấy các đồ uống có thể bán nguyên bản.
                 string query = @"
                     SELECT 
                         d.ID, 
@@ -74,64 +81,62 @@ namespace namm
                         ISNULL(c.Name, 'N/A') AS CategoryName 
                     FROM Drink d
                     LEFT JOIN Category c ON d.CategoryID = c.ID
-                    -- Logic mới: Hiển thị tất cả đồ uống đã từng được gán giá nguyên bản (kể cả khi giá đó đã được đặt về 0 để ẩn)
-                    -- Điều này đảm bảo các món đã ẩn vẫn còn trong danh sách để quản lý.
                     WHERE d.ID IN (SELECT DISTINCT DrinkID FROM BillInfo WHERE DrinkType = N'Nguyên bản') OR d.OriginalPrice > 0 OR d.StockQuantity > 0";
 
                 SqlDataAdapter adapter = new SqlDataAdapter(query, connection);
-                drinkDataTable = new DataTable(); // Initialize the DataTable
+                drinkDataTable = new DataTable();
                 drinkDataTable.Columns.Add("STT", typeof(int));
                 drinkDataTable.Columns.Add("StatusText", typeof(string));
                 await Task.Run(() => adapter.Fill(drinkDataTable));
 
-                // Sau khi đã đổ dữ liệu vào DataTable, cập nhật cột StatusText
+                // Cập nhật cột "StatusText" dựa trên giá nhập.
                 foreach (DataRow row in drinkDataTable.Rows)
                 {
-                    // Nếu OriginalPrice > 0 thì là "Hoạt động", ngược lại là "Đã ẩn"
                     bool isActive = Convert.ToDecimal(row["OriginalPrice"]) > 0;
-                    row["StatusText"] = isActive ? "Hoạt động" : "Đã ẩn";
+                    row["StatusText"] = isActive ? "Hoạt động" : "Đã ẩn"; // Nếu giá nhập > 0, coi là đang hoạt động.
                 }
 
-
-
-                dgDrinks.ItemsSource = drinkDataTable.DefaultView;
+                dgDrinks.ItemsSource = drinkDataTable.DefaultView; // Gán dữ liệu cho DataGrid.
             }
         }
 
+        // Sự kiện được gọi cho mỗi dòng khi DataGrid đang được tải, dùng để đánh số thứ tự.
         private void DgDrinks_LoadingRow(object sender, DataGridRowEventArgs e)
         {
             if (e.Row.Item is DataRowView rowView)
             {
-                rowView["STT"] = e.Row.GetIndex() + 1;
+                rowView["STT"] = e.Row.GetIndex() + 1; // Gán số thứ tự.
             }
         }
 
+        // Sự kiện được gọi khi người dùng chọn một dòng trong DataGrid.
         private void DgDrinks_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            // Khi chọn từ Grid, đồng bộ lên ComboBox và các trường
+            // Khi chọn một dòng, hiển thị thông tin của nó lên form bên phải.
             if (dgDrinks.SelectedItem is DataRowView row)
             {
-                cbDrink.SelectionChanged -= CbDrink_SelectionChanged; // Tạm ngắt event
-                cbDrink.SelectedValue = row["ID"];
-                cbDrink.SelectionChanged += CbDrink_SelectionChanged; // Bật lại event
+                cbDrink.SelectionChanged -= CbDrink_SelectionChanged; // Tạm ngắt sự kiện để tránh vòng lặp.
+                cbDrink.SelectedValue = row["ID"]; // Đồng bộ lựa chọn lên ComboBox.
+                cbDrink.SelectionChanged += CbDrink_SelectionChanged; // Bật lại sự kiện.
 
+                // Điền thông tin vào các ô nhập liệu.
                 txtDrinkCode.Text = row["DrinkCode"] as string ?? string.Empty;
                 txtPrice.Text = Convert.ToDecimal(row["OriginalPrice"]).ToString("G0"); // Bỏ phần thập phân .00
                 txtActualPrice.Text = Convert.ToDecimal(row["ActualPrice"]).ToString("G0"); // Bỏ phần thập phân .00
 
-                // Cập nhật nội dung nút Ẩn/Hiện
+                // Cập nhật nội dung và tooltip của nút Ẩn/Hiện.
                 bool isHidden = Convert.ToDecimal(row["OriginalPrice"]) == 0;
                 btnHide.Content = isHidden ? "Hiện" : "Ẩn";
                 btnHide.ToolTip = isHidden ? "Kích hoạt lại đồ uống này để bán dưới dạng nguyên bản." : "Ẩn đồ uống này khỏi danh sách bán nguyên bản.";
 
                 txtStockQuantity.Text = Convert.ToDecimal(row["StockQuantity"]).ToString("G0");
-                cbDrink.IsEnabled = false; // Không cho đổi đồ uống khi đang sửa
-                btnHide.IsEnabled = true; // Bật nút ẩn
-                btnDelete.IsEnabled = true; // Bật nút xóa
+                cbDrink.IsEnabled = false; // Không cho đổi đồ uống khi đang ở chế độ sửa.
+                btnHide.IsEnabled = true; // Bật các nút chức năng.
+                btnDelete.IsEnabled = true;
             }
         }
 
-        // Đổi tên BtnAdd và BtnEdit thành một nút BtnSave duy nhất
+        // Xử lý khi nhấn nút "Lưu".
         private void BtnSave_Click(object sender, RoutedEventArgs e)
         {
             if (cbDrink.SelectedItem == null)
@@ -139,23 +144,23 @@ namespace namm
                 MessageBox.Show("Vui lòng chọn một đồ uống để gán thuộc tính.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
-            if (!ValidateInput()) return;
+            if (!ValidateInput()) return; // Kiểm tra dữ liệu nhập có hợp lệ không.
 
             int drinkId = (int)cbDrink.SelectedValue;
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                // Luôn là UPDATE, không có INSERT ở màn hình này
+                // Câu lệnh UPDATE để cập nhật giá và tồn kho.
                 const string query = "UPDATE Drink SET OriginalPrice = @OriginalPrice, ActualPrice = @ActualPrice, StockQuantity = @StockQuantity WHERE ID = @ID";
                 SqlCommand command = new SqlCommand(query, connection);
-                AddParameters(command, drinkId); // Truyền ID vào
+                AddParameters(command, drinkId); // Thêm các tham số vào câu lệnh.
                 try
                 {
                     connection.Open();
                     command.ExecuteNonQuery();
                     MessageBox.Show("Cập nhật đồ uống thành công!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
-                    _ = LoadDrinksAsync(); // Tải lại danh sách
-                    ResetFields();
+                    _ = LoadDrinksAsync(); // Tải lại danh sách để cập nhật giao diện.
+                    ResetFields(); // Làm mới form.
                 }
                 catch (SqlException ex)
                 {
@@ -164,6 +169,7 @@ namespace namm
             }
         }
 
+        // Xử lý khi nhấn nút "Xóa".
         private async void BtnDelete_Click(object sender, RoutedEventArgs e)
         {
             if (dgDrinks.SelectedItem == null)
@@ -177,7 +183,7 @@ namespace namm
                 int drinkId = (int)row["ID"];
                 string drinkName = row["Name"].ToString() ?? "Không tên";
 
-                // Kiểm tra xem đồ uống có tồn tại trong bất kỳ hóa đơn nào không
+                // Kiểm tra xem đồ uống có tồn tại trong lịch sử giao dịch không.
                 bool isInBill = false;
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
@@ -192,12 +198,14 @@ namespace namm
                     }
                 }
 
+                // Nếu đã có giao dịch, không cho phép xóa.
                 if (isInBill)
                 {
                     MessageBox.Show($"Không thể xóa đồ uống '{drinkName}' vì đã có lịch sử giao dịch. Bạn có thể ẩn đồ uống này thay thế.", "Không thể xóa", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
 
+                // Hiển thị hộp thoại xác nhận trước khi xóa vĩnh viễn.
                 if (MessageBox.Show($"Bạn có chắc chắn muốn xóa vĩnh viễn đồ uống '{drinkName}' không? Hành động này sẽ xóa cả công thức pha chế (nếu có) và không thể hoàn tác.", "Xác nhận xóa", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {
                     using (SqlConnection connection = new SqlConnection(connectionString))
@@ -208,13 +216,14 @@ namespace namm
                         await connection.OpenAsync();
                         await command.ExecuteNonQueryAsync();
                         MessageBox.Show("Xóa đồ uống thành công!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
-                        await LoadDataAsync(); // Tải lại toàn bộ dữ liệu
-                        ResetFields();
+                        await LoadDataAsync(); // Tải lại toàn bộ dữ liệu.
+                        ResetFields(); // Làm mới form.
                     }
                 }
             }
         }
 
+        // Xử lý khi nhấn nút "Ẩn" hoặc "Hiện".
         private async void BtnHide_Click(object sender, RoutedEventArgs e)
         {
             if (dgDrinks.SelectedItem == null)
@@ -223,7 +232,7 @@ namespace namm
                 return;
             }
 
-            if (dgDrinks.SelectedItem is DataRowView row) // Đã sửa lỗi CS0103 ở đây
+            if (dgDrinks.SelectedItem is DataRowView row)
             {
                 int drinkId = (int)row["ID"];
                 string drinkName = row["Name"].ToString() ?? "Không tên";
@@ -236,16 +245,16 @@ namespace namm
 
                 if (MessageBox.Show(confirmationMessage, "Xác nhận", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {
-                    // Nếu hành động là "Hiện", không làm gì cả. Người dùng cần nhập giá mới và nhấn Lưu.
+                    // Nếu hành động là "Hiện", chỉ thông báo và yêu cầu người dùng nhập giá mới rồi nhấn Lưu.
                     if (isCurrentlyHidden)
                     {
                         MessageBox.Show($"Để kích hoạt lại '{drinkName}', vui lòng nhập giá nhập mới và nhấn 'Lưu'.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
-                        txtPrice.Focus(); // Focus vào ô nhập giá
+                        txtPrice.Focus(); // Đặt con trỏ vào ô nhập giá.
                         txtPrice.SelectAll();
                         return;
                     }
 
-                    // Nếu hành động là "Ẩn", cập nhật OriginalPrice về 0
+                    // Nếu hành động là "Ẩn", cập nhật OriginalPrice về 0 trong CSDL.
                     try
                     {
                         using (SqlConnection connection = new SqlConnection(connectionString))
@@ -259,8 +268,8 @@ namespace namm
                         }
 
                         MessageBox.Show($"Đã ẩn đồ uống '{drinkName}' thành công!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
-                        await LoadDataAsync(); // Tải lại dữ liệu để cập nhật bảng
-                        ResetFields();
+                        await LoadDataAsync(); // Tải lại dữ liệu để cập nhật giao diện.
+                        ResetFields(); // Làm mới form.
                     }
                     catch (SqlException ex)
                     {
@@ -270,6 +279,7 @@ namespace namm
             }
         }
 
+        // Hàm này không còn cần thiết vì logic đã được tích hợp trong LoadDrinksAsync.
         private void UpdateStatusText()
         {
             if (drinkDataTable == null) return;
@@ -280,32 +290,36 @@ namespace namm
             }
         }
 
+        // Xử lý khi nhấn nút "Làm mới".
         private void BtnReset_Click(object sender, RoutedEventArgs e)
         {
             ResetFields();
         }
 
+        // Sự kiện được gọi mỗi khi nội dung trong ô tìm kiếm thay đổi.
         private void TxtSearch_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (drinkDataTable != null)
             {
+                // Lọc các dòng trong DataGrid dựa trên văn bản tìm kiếm.
                 drinkDataTable.DefaultView.RowFilter = $"Name LIKE '%{txtSearch.Text}%'";
             }
         }
 
+        // Sự kiện được gọi khi người dùng chọn một đồ uống từ ComboBox.
         private void CbDrink_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (cbDrink.SelectedItem is DataRowView selectedDrink && drinkDataTable != null)
             {
                 int selectedId = (int)selectedDrink["ID"];
 
-                // Tìm kiếm đồ uống trong bảng dữ liệu đã tải
+                // Tìm kiếm xem đồ uống này đã có trong danh sách quản lý (DataGrid) chưa.
                 DataRow? existingDrinkRow = drinkDataTable.AsEnumerable()
                     .FirstOrDefault(row => (int)row["ID"] == selectedId);
 
+                // Nếu đã có, hiển thị thông tin của nó.
                 if (existingDrinkRow != null)
                 {
-                    // Nếu đồ uống đã tồn tại trong danh sách, hiển thị thông tin của nó
                     txtDrinkCode.Text = existingDrinkRow["DrinkCode"] as string ?? string.Empty;
                     txtPrice.Text = Convert.ToDecimal(existingDrinkRow["OriginalPrice"]).ToString("G0");
                     txtActualPrice.Text = Convert.ToDecimal(existingDrinkRow["ActualPrice"]).ToString("G0");
@@ -313,7 +327,7 @@ namespace namm
                 }
                 else
                 {
-                    // Nếu là đồ uống mới, tạo mã và xóa các trường khác
+                    // Nếu là đồ uống chưa được quản lý, tạo mã mới và xóa các trường khác.
                     txtDrinkCode.Text = (selectedDrink["DrinkCode"] as string ?? "") + "_NB";
                     txtPrice.Clear();
                     txtActualPrice.Clear();
@@ -322,6 +336,7 @@ namespace namm
             }
         }
 
+        // Hàm để xóa trắng các ô nhập liệu và đặt lại trạng thái các nút.
         private void ResetFields()
         {
             cbDrink.SelectedIndex = -1;
@@ -330,12 +345,13 @@ namespace namm
             txtActualPrice.Clear();
             txtStockQuantity.Clear();
             dgDrinks.SelectedItem = null;
-            cbDrink.IsEnabled = true; // Cho phép chọn đồ uống mới
+            cbDrink.IsEnabled = true; // Cho phép chọn đồ uống mới.
             btnHide.Content = "Ẩn";
-            btnHide.IsEnabled = false; // Tắt nút ẩn
-            btnDelete.IsEnabled = false; // Tắt nút xóa
+            btnHide.IsEnabled = false; // Tắt các nút chức năng.
+            btnDelete.IsEnabled = false;
         }
 
+        // Hàm kiểm tra dữ liệu đầu vào.
         private bool ValidateInput()
         {
             if (cbDrink.SelectedItem == null || string.IsNullOrWhiteSpace(txtPrice.Text) || 
@@ -352,6 +368,7 @@ namespace namm
             return true;
         }
 
+        // Hàm trợ giúp để thêm các tham số vào SqlCommand, tránh lặp lại code.
         private void AddParameters(SqlCommand command, int? id = null)
         {
             if (id.HasValue)

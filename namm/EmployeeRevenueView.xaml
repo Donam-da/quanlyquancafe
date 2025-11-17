@@ -7,8 +7,9 @@
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="1000"
              FontFamily="Segoe UI" Loaded="UserControl_Loaded">
+    <!-- Layout chính, sắp xếp các phần tử theo các cạnh (Trên, Dưới, Trái, Phải). -->
     <DockPanel Margin="10">
-        <!-- Tiêu đề -->
+        <!-- Hàng 1 (trên cùng): Tiêu đề của màn hình. -->
         <Border DockPanel.Dock="Top" Padding="5" Margin="0,0,0,10" BorderBrush="LightGray" BorderThickness="0,0,0,1">
             <TextBlock Text="THỐNG KÊ DOANH THU THEO NHÂN VIÊN" 
                        FontSize="20" 
@@ -17,37 +18,38 @@
                        HorizontalAlignment="Center"/>
         </Border>
 
-        <!-- Thanh công cụ lọc -->
+        <!-- Hàng 2: Thanh công cụ chứa các bộ lọc. -->
         <Border DockPanel.Dock="Top" Padding="10" Margin="0,0,0,10" BorderBrush="Gainsboro" BorderThickness="1" CornerRadius="5">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                 <TextBlock Text="Từ ngày:" VerticalAlignment="Center" Margin="5"/>
-                <DatePicker x:Name="dpStartDate" Width="120" VerticalContentAlignment="Center" SelectedDateChanged="Filters_Changed"/>
+                <DatePicker x:Name="dpStartDate" Width="120" VerticalContentAlignment="Center" SelectedDateChanged="Filters_Changed"/> <!-- Bộ chọn ngày bắt đầu. -->
                 <TextBlock Text="Đến ngày:" VerticalAlignment="Center" Margin="15,5,5,5"/>
-                <DatePicker x:Name="dpEndDate" Width="120" VerticalContentAlignment="Center" SelectedDateChanged="Filters_Changed"/>
+                <DatePicker x:Name="dpEndDate" Width="120" VerticalContentAlignment="Center" SelectedDateChanged="Filters_Changed"/> <!-- Bộ chọn ngày kết thúc. -->
                 
                 <TextBlock Text="Nhân viên:" VerticalAlignment="Center" Margin="15,5,5,5"/>
+                <!-- ComboBox để chọn nhân viên (chỉ Admin mới dùng được). -->
                 <ComboBox x:Name="cbEmployees" Width="180" VerticalContentAlignment="Center"
                           DisplayMemberPath="DisplayName" SelectedValuePath="UserName"
                           SelectionChanged="Filters_Changed"/>
 
-                <Button x:Name="btnFilter" Content="Lọc dữ liệu" Width="100" Height="30" Margin="20,0" Click="BtnFilter_Click"/>
+                <Button x:Name="btnFilter" Content="Lọc dữ liệu" Width="100" Height="30" Margin="20,0" Click="BtnFilter_Click"/> <!-- Nút để áp dụng bộ lọc. -->
             </StackPanel>
         </Border>
 
-        <!-- Bảng dữ liệu -->
+        <!-- Phần giữa (chiếm hết không gian còn lại): Bảng hiển thị dữ liệu thống kê. -->
         <DataGrid x:Name="dgEmployeeRevenue" AutoGenerateColumns="False" IsReadOnly="True"
                   CanUserSortColumns="True" GridLinesVisibility="Horizontal" AlternatingRowBackground="#F9F9F9">
             <DataGrid.Resources>
-                <!-- Căn giữa cho tất cả tiêu đề cột -->
+                <!-- Định nghĩa các style để căn giữa nội dung trong bảng. -->
                 <Style TargetType="DataGridColumnHeader">
                     <Setter Property="HorizontalContentAlignment" Value="Center"/>
                     <Setter Property="FontWeight" Value="SemiBold"/>
                 </Style>
-                <!-- Căn giữa cho nội dung của tất cả các ô -->
                 <Style TargetType="DataGridCell">
                     <Setter Property="TextBlock.TextAlignment" Value="Center"/>
                 </Style>
             </DataGrid.Resources>
+            <!-- Định nghĩa các cột sẽ hiển thị trong DataGrid. -->
             <DataGrid.Columns>
                 <DataGridTextColumn Header="STT" Binding="{Binding STT}" Width="0.5*"/>
                 <DataGridTextColumn Header="Tên nhân viên" Binding="{Binding DisplayName}" Width="2*"/>
@@ -58,7 +60,7 @@
             </DataGrid.Columns>
         </DataGrid>
 
-        <!-- Dòng tổng kết -->
+        <!-- Hàng cuối cùng (dưới đáy): Dòng tổng kết. -->
         <Border DockPanel.Dock="Bottom" BorderBrush="LightGray" BorderThickness="0,1,0,0" Margin="0,10,0,0" Padding="10">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -68,11 +70,13 @@
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0" Text="TỔNG CỘNG" FontWeight="Bold" FontSize="16" VerticalAlignment="Center"/>
 
+                <!-- Hiển thị tổng số hóa đơn. -->
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="0,0,30,0">
                     <TextBlock Text="Tổng số hóa đơn: " VerticalAlignment="Center" FontWeight="SemiBold"/>
                     <TextBlock x:Name="tbTotalInvoices" Text="0" VerticalAlignment="Center" FontWeight="Bold" FontSize="16" Foreground="DarkBlue"/>
                 </StackPanel>
 
+                <!-- Hiển thị tổng doanh thu. -->
                 <StackPanel Grid.Column="2" Orientation="Horizontal">
                     <TextBlock Text="Tổng doanh thu: " VerticalAlignment="Center" FontWeight="SemiBold"/>
                     <TextBlock x:Name="tbTotalRevenue" Text="0 VNĐ" VerticalAlignment="Center" FontWeight="Bold" FontSize="16" Foreground="DarkRed"/>

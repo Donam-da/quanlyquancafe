@@ -8,14 +8,16 @@
              d:DesignHeight="550" d:DesignWidth="1024"
              Loaded="UserControl_Loaded">
     <UserControl.Resources>
+        <!-- Nơi định nghĩa các tài nguyên, style dùng chung trong UserControl này. -->
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <!-- Nạp tệp style cho nút xóa -->
+                <!-- Nạp tệp style cho nút "Xóa" có dạng link. -->
                 <ResourceDictionary Source="LinkButtonStyle.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
+        <!-- Định nghĩa các style dùng chung cho các cột và ô trong DataGrid để căn giữa nội dung. -->
         <Grid.Resources>
             <Style x:Key="CenterAlignedColumn" TargetType="DataGridColumnHeader" BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
                 <Setter Property="HorizontalContentAlignment" Value="Center" />
@@ -24,25 +26,31 @@
                 <Setter Property="HorizontalAlignment" Value="Center" />
             </Style>
         </Grid.Resources>
+        <!-- Chia giao diện thành 3 cột có chiều rộng bằng nhau. -->
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
+        <!-- Cột 0 (bên trái): Sơ đồ bàn. -->
         <DockPanel Grid.Column="0" Margin="5">
             <TextBlock DockPanel.Dock="Top" Text="SƠ ĐỒ BÀN" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,5"/>
+            <!-- Bảng hiển thị danh sách các bàn. -->
             <DataGrid x:Name="dgTables" AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single" LoadingRow="DgTables_LoadingRow" SelectionChanged="DgTables_SelectionChanged">
+                <!-- Style cho các dòng trong DataGrid, cho phép đổi màu nền dựa trên trạng thái. -->
                 <DataGrid.RowStyle>
                     <Style TargetType="DataGridRow">
                         <Style.Triggers>
+                            <!-- Nếu trạng thái là "Trống", nền màu xanh lá. -->
                             <DataTrigger Binding="{Binding Status}" Value="Trống">
                                 <Setter Property="Background" Value="LightGreen"/>
                             </DataTrigger>
+                            <!-- Nếu trạng thái là "Có người", nền màu đỏ nhạt. -->
                             <DataTrigger Binding="{Binding Status}" Value="Có người">
                                 <Setter Property="Background" Value="LightCoral"/>
                             </DataTrigger>
-                            <!-- Chỉ tô màu vàng khi bàn được chọn VÀ trạng thái là 'Trống' -->
+                            <!-- Nếu bàn được chọn VÀ trạng thái là 'Trống', nền màu vàng. -->
                             <MultiDataTrigger>
                                 <MultiDataTrigger.Conditions>
                                     <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="True"/>
@@ -51,18 +59,19 @@
                                 <Setter Property="Background" Value="Gold" />
                                 <Setter Property="Foreground" Value="Black" />
                             </MultiDataTrigger>
-                            <!-- Thêm Trigger để tùy chỉnh màu khi chọn bàn 'Có người' -->
+                            <!-- Nếu bàn được chọn VÀ trạng thái là 'Có người', nền màu đỏ đậm. -->
                             <MultiDataTrigger>
                                 <MultiDataTrigger.Conditions>
                                     <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="True"/>
                                     <Condition Binding="{Binding Status}" Value="Có người"/>
                                 </MultiDataTrigger.Conditions>
-                                <Setter Property="Background" Value="Crimson" /> <!-- Màu đỏ đậm hơn khi được chọn -->
+                                <Setter Property="Background" Value="Crimson" />
                                 <Setter Property="Foreground" Value="White" />
                             </MultiDataTrigger>
                         </Style.Triggers>
                     </Style>
                 </DataGrid.RowStyle>
+                <!-- Định nghĩa các cột hiển thị trong bảng. -->
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="STT" Binding="{Binding STT}" Width="40" HeaderStyle="{StaticResource CenterAlignedColumn}" ElementStyle="{StaticResource CenterAlignedCell}"/>
                     <DataGridTextColumn Header="Tên bàn" Binding="{Binding Name}" Width="*" HeaderStyle="{StaticResource CenterAlignedColumn}" ElementStyle="{StaticResource CenterAlignedCell}"/>
@@ -71,13 +80,15 @@
             </DataGrid>
         </DockPanel>
 
-        <!-- Cột 2: Menu đồ uống -->
+        <!-- Cột 1 (ở giữa): Menu đồ uống. -->
         <DockPanel Grid.Column="1" Margin="5">
             <TextBlock DockPanel.Dock="Top" Text="MENU" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,5"/>
+            <!-- Chứa bộ lọc theo loại và nút chức năng. -->
             <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
-                <ComboBox x:Name="cbCategory" Width="150" Margin="0,0,5,0" DisplayMemberPath="Name"/>
+                <ComboBox x:Name="cbCategory" Width="150" Margin="0,0,5,0" DisplayMemberPath="Name"/> <!-- ComboBox để lọc đồ uống theo loại. -->
                 <Button Content="Thêm món" Width="80"/>
             </StackPanel>
+            <!-- Bảng hiển thị danh sách đồ uống. Người dùng double-click vào một món để thêm vào hóa đơn. -->
             <DataGrid x:Name="dgMenu" Margin="0,5,0,0" AutoGenerateColumns="False" IsReadOnly="True"
                       HeadersVisibility="Column" SelectionMode="Single" LoadingRow="DgMenu_LoadingRow"
                       MouseDoubleClick="DgMenu_MouseDoubleClick">
@@ -89,31 +100,35 @@
             </DataGrid>
         </DockPanel>
 
-        <!-- Cột 3: Hóa đơn -->
+        <!-- Cột 2 (bên phải): Hóa đơn. -->
         <DockPanel Grid.Column="2" Margin="5">
+            <!-- Phần tiêu đề, hiển thị tên bàn đang được chọn. -->
             <StackPanel DockPanel.Dock="Top" HorizontalAlignment="Center" Margin="0,0,0,10">
                 <TextBlock Text="HÓA ĐƠN" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
                 <TextBlock x:Name="tbSelectedTable" Text="(Chưa chọn bàn)" FontSize="14" FontStyle="Italic" Foreground="Gray" HorizontalAlignment="Center"/>
             </StackPanel>
+            <!-- Phần dưới cùng, chứa tổng tiền và nút thanh toán. -->
             <StackPanel DockPanel.Dock="Bottom" Margin="0,10,0,0">
                 <Separator/>
                 <Grid Margin="0,10,0,0">
                     <TextBlock Text="Tổng cộng:" FontSize="16" FontWeight="Bold" HorizontalAlignment="Left"/>
-                    <TextBlock x:Name="tbTotalAmount" Text="0" FontSize="16" FontWeight="Bold" HorizontalAlignment="Right" Padding="0,0,30,0"/>
+                    <TextBlock x:Name="tbTotalAmount" Text="0 VNĐ" FontSize="16" FontWeight="Bold" HorizontalAlignment="Right" Padding="0,0,30,0"/>
                 </Grid>
-                <Button x:Name="btnPay" Content="Thanh toán" Height="40" FontSize="16" FontWeight="Bold" Margin="0,10,0,0" Background="#4CAF50" Foreground="White" Click="BtnPay_Click"/>
+                <Button x:Name="btnPay" Content="Thanh toán" Height="40" FontSize="16" FontWeight="Bold" Margin="0,10,0,0" Background="#4CAF50" Foreground="White" Click="BtnPay_Click"/> <!-- Nút để chuyển sang màn hình thanh toán. -->
             </StackPanel>
 
+            <!-- Bảng hiển thị các món trong hóa đơn của bàn đang chọn. -->
             <DataGrid x:Name="dgBill" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Mã kiểu đồ uống" Binding="{Binding DrinkTypeCode}" Width="30*" HeaderStyle="{StaticResource CenterAlignedColumn}" ElementStyle="{StaticResource CenterAlignedCell}"/>
                     <DataGridTextColumn Header="SL" Binding="{Binding Quantity}" Width="10*" HeaderStyle="{StaticResource CenterAlignedColumn}" ElementStyle="{StaticResource CenterAlignedCell}"/>
                     <DataGridTextColumn Header="Đơn giá" Binding="{Binding Price, StringFormat={}{0:N0}}" Width="20*" HeaderStyle="{StaticResource CenterAlignedColumn}" ElementStyle="{StaticResource CenterAlignedCell}"/>
                     <DataGridTextColumn Header="Thành tiền" Binding="{Binding TotalPrice, StringFormat={}{0:N0}}" Width="20*" HeaderStyle="{StaticResource CenterAlignedColumn}" ElementStyle="{StaticResource CenterAlignedCell}"/>
+                    <!-- Cột chứa nút "Xóa" cho mỗi món trong hóa đơn. -->
                     <DataGridTemplateColumn Width="Auto" HeaderStyle="{StaticResource CenterAlignedColumn}">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Button Content="Xóa" CommandParameter="{Binding}" Click="DeleteBillItem_Click" Style="{StaticResource LinkButton}"/>
+                                <Button Content="Xóa" CommandParameter="{Binding}" Click="DeleteBillItem_Click" Style="{StaticResource LinkButton}"/> <!-- CommandParameter truyền toàn bộ đối tượng BillItem vào sự kiện Click. -->
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>

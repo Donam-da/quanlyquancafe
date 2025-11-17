@@ -1,15 +1,18 @@
+<!-- Định nghĩa một cửa sổ (Window) cho phép người dùng chọn một màu sắc bằng các thanh trượt RGB. -->
 <Window x:Class="namm.ColorPickerDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="Chọn màu" Height="300" Width="400"
-        WindowStartupLocation="CenterScreen"
-        ResizeMode="NoResize"
-        Loaded="Window_Loaded"
-        FontFamily="Segoe UI">
+        Title="Chọn màu" Height="300" Width="400" <!-- Tiêu đề, chiều cao, chiều rộng của cửa sổ. -->
+        WindowStartupLocation="CenterScreen" <!-- Cửa sổ sẽ hiện ở giữa màn hình. -->
+        ResizeMode="NoResize" <!-- Không cho phép người dùng thay đổi kích thước cửa sổ. -->
+        Loaded="Window_Loaded" <!-- Sự kiện được gọi khi cửa sổ tải xong. -->
+        FontFamily="Segoe UI"> <!-- Font chữ chung cho cửa sổ. -->
+    <!-- Layout chính, chia không gian thành các hàng và cột. -->
     <Grid Margin="15">
+        <!-- Định nghĩa các hàng cho layout. -->
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -17,29 +20,35 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
+        <!-- Định nghĩa các cột cho layout. -->
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
 
+        <!-- Hàng 0: Thanh trượt cho màu Đỏ (Red). -->
         <TextBlock Grid.Row="0" Grid.Column="0" Text="Đỏ (R):" VerticalAlignment="Center" Margin="0,5"/>
-        <Slider Grid.Row="0" Grid.Column="1" x:Name="sliderRed" Minimum="0" Maximum="255" ValueChanged="Slider_ValueChanged" Margin="5,5"/>
-        <TextBlock Grid.Row="0" Grid.Column="2" x:Name="txtRedValue" Text="{Binding ElementName=sliderRed, Path=Value, StringFormat={}{0:F0}}" VerticalAlignment="Center" Margin="5,5"/>
+        <Slider Grid.Row="0" Grid.Column="1" x:Name="sliderRed" Minimum="0" Maximum="255" ValueChanged="Slider_ValueChanged" Margin="5,5"/> <!-- Thanh trượt giá trị từ 0-255. -->
+        <TextBlock Grid.Row="0" Grid.Column="2" x:Name="txtRedValue" Text="{Binding ElementName=sliderRed, Path=Value, StringFormat={}{0:F0}}" VerticalAlignment="Center" Margin="5,5"/> <!-- Hiển thị giá trị số của thanh trượt Đỏ. -->
 
+        <!-- Hàng 1: Thanh trượt cho màu Xanh lá (Green). -->
         <TextBlock Grid.Row="1" Grid.Column="0" Text="Xanh lá (G):" VerticalAlignment="Center" Margin="0,5"/>
         <Slider Grid.Row="1" Grid.Column="1" x:Name="sliderGreen" Minimum="0" Maximum="255" ValueChanged="Slider_ValueChanged" Margin="5,5"/>
-        <TextBlock Grid.Row="1" Grid.Column="2" x:Name="txtGreenValue" Text="{Binding ElementName=sliderGreen, Path=Value, StringFormat={}{0:F0}}" VerticalAlignment="Center" Margin="5,5"/>
+        <TextBlock Grid.Row="1" Grid.Column="2" x:Name="txtGreenValue" Text="{Binding ElementName=sliderGreen, Path=Value, StringFormat={}{0:F0}}" VerticalAlignment="Center" Margin="5,5"/> <!-- Hiển thị giá trị số của thanh trượt Xanh lá. -->
 
+        <!-- Hàng 2: Thanh trượt cho màu Xanh dương (Blue). -->
         <TextBlock Grid.Row="2" Grid.Column="0" Text="Xanh dương (B):" VerticalAlignment="Center" Margin="0,5"/>
         <Slider Grid.Row="2" Grid.Column="1" x:Name="sliderBlue" Minimum="0" Maximum="255" ValueChanged="Slider_ValueChanged" Margin="5,5"/>
-        <TextBlock Grid.Row="2" Grid.Column="2" x:Name="txtBlueValue" Text="{Binding ElementName=sliderBlue, Path=Value, StringFormat={}{0:F0}}" VerticalAlignment="Center" Margin="5,5"/>
+        <TextBlock Grid.Row="2" Grid.Column="2" x:Name="txtBlueValue" Text="{Binding ElementName=sliderBlue, Path=Value, StringFormat={}{0:F0}}" VerticalAlignment="Center" Margin="5,5"/> <!-- Hiển thị giá trị số của thanh trượt Xanh dương. -->
 
+        <!-- Hàng 3: Ô hình chữ nhật để xem trước màu được chọn. -->
         <Rectangle Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" x:Name="colorPreview" Height="50" Margin="0,10" Stroke="Black" StrokeThickness="1"/>
 
+        <!-- Hàng 4: Các nút hành động OK và Hủy. -->
         <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
-            <Button Content="OK" Width="80" Height="30" Margin="0,0,10,0" Click="BtnOk_Click" IsDefault="True"/>
-            <Button Content="Hủy" Width="80" Height="30" Click="BtnCancel_Click" IsCancel="True"/>
+            <Button Content="OK" Width="80" Height="30" Margin="0,0,10,0" Click="BtnOk_Click" IsDefault="True"/> <!-- Nút OK, IsDefault=True cho phép nhấn Enter để kích hoạt. -->
+            <Button Content="Hủy" Width="80" Height="30" Click="BtnCancel_Click" IsCancel="True"/> <!-- Nút Hủy, IsCancel=True cho phép nhấn Esc để kích hoạt. -->
         </StackPanel>
     </Grid>
 </Window>
