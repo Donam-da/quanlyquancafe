@@ -7,42 +7,43 @@
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="1000"
              FontFamily="Segoe UI" Loaded="UserControl_Loaded">
+    <!-- Layout chính, sắp xếp các phần tử theo các cạnh (Trên, Dưới, Trái, Phải). -->
     <DockPanel Margin="10">
-        <!-- Thanh công cụ lọc -->
+        <!-- Phần trên cùng: Chứa thanh công cụ lọc theo ngày và hiển thị tổng doanh thu. -->
         <Border DockPanel.Dock="Top" Padding="5" Margin="0,0,0,10" BorderBrush="LightGray" BorderThickness="0,0,0,1">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                 <TextBlock Text="Từ ngày:" VerticalAlignment="Center" Margin="5"/>
-                <DatePicker x:Name="dpStartDate" Width="120" VerticalContentAlignment="Center" SelectedDateChanged="DpStartDate_SelectedDateChanged"/>
+                <DatePicker x:Name="dpStartDate" Width="120" VerticalContentAlignment="Center" SelectedDateChanged="DpStartDate_SelectedDateChanged"/> <!-- Bộ chọn ngày bắt đầu. -->
                 <TextBlock Text="Đến ngày:" VerticalAlignment="Center" Margin="15,5,5,5"/>
-                <DatePicker x:Name="dpEndDate" Width="120" VerticalContentAlignment="Center"/>
-                <Button x:Name="btnFilter" Content="Lọc" Width="80" Height="30" Margin="15,0" Click="BtnFilter_Click"/>
+                <DatePicker x:Name="dpEndDate" Width="120" VerticalContentAlignment="Center"/> <!-- Bộ chọn ngày kết thúc. -->
+                <Button x:Name="btnFilter" Content="Lọc" Width="80" Height="30" Margin="15,0" Click="BtnFilter_Click"/> <!-- Nút để áp dụng bộ lọc. -->
                 <TextBlock Text="Tổng doanh thu:" VerticalAlignment="Center" Margin="20,0,5,0" FontWeight="SemiBold"/>
-                <TextBlock x:Name="tbTotalRevenue" Text="0 VNĐ" VerticalAlignment="Center" FontWeight="Bold" FontSize="16" Foreground="DarkRed"/>
+                <TextBlock x:Name="tbTotalRevenue" Text="0 VNĐ" VerticalAlignment="Center" FontWeight="Bold" FontSize="16" Foreground="DarkRed"/> <!-- Hiển thị tổng doanh thu. -->
             </StackPanel>
         </Border>
 
-        <!-- Nội dung chính -->
+        <!-- Phần giữa (chiếm hết không gian còn lại): Chia làm 3 cột. -->
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="3*"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="3*"/> <!-- Cột danh sách hóa đơn, chiếm 3 phần. -->
+                <ColumnDefinition Width="Auto"/> <!-- Cột chứa thanh chia, tự động co giãn. -->
+                <ColumnDefinition Width="2*"/> <!-- Cột xem trước, chiếm 2 phần. -->
             </Grid.ColumnDefinitions>
 
-            <!-- Danh sách hóa đơn -->
+            <!-- Cột 0: Bảng (DataGrid) hiển thị danh sách các hóa đơn đã thanh toán. -->
             <DataGrid Grid.Column="0" x:Name="dgInvoices" AutoGenerateColumns="False" IsReadOnly="True"
                       SelectionMode="Single" SelectionChanged="DgInvoices_SelectionChanged" LoadingRow="DgInvoices_LoadingRow"
                       CanUserSortColumns="True">
                 <DataGrid.Resources>
-                    <!-- Căn giữa cho tất cả tiêu đề cột -->
+                    <!-- Định nghĩa các style để căn giữa nội dung trong bảng. -->
                     <Style TargetType="DataGridColumnHeader">
                         <Setter Property="HorizontalContentAlignment" Value="Center"/>
                     </Style>
-                    <!-- Căn giữa cho nội dung của tất cả các ô -->
                     <Style TargetType="DataGridCell">
                         <Setter Property="TextBlock.TextAlignment" Value="Center"/>
                     </Style>
                 </DataGrid.Resources>
+                <!-- Định nghĩa các cột sẽ hiển thị trong DataGrid. -->
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="STT" Binding="{Binding STT}" Width="0.5*"/>
                     <DataGridTextColumn Header="Mã HĐ" Binding="{Binding ID, StringFormat=D6}" Width="0.8*"/>
@@ -50,23 +51,23 @@
                     <DataGridTextColumn Header="Tên Khách hàng" Binding="{Binding CustomerName}" Width="1.5*"/>
                     <DataGridTextColumn Header="Mã Khách hàng" Binding="{Binding CustomerCode}" Width="1.3*"/>
                     <DataGridTextColumn Header="Bàn" Binding="{Binding TableName}" Width="0.5*"/>
-                    <DataGridTextColumn Header="Tổng tiền" Binding="{Binding TotalAmount, StringFormat={}{0:N0} VNĐ}" Width="1.3*">
+                    <DataGridTextColumn Header="Tổng tiền" Binding="{Binding TotalAmount, StringFormat={}{0:N0} VNĐ}" Width="1.3*"> <!-- Cột tổng tiền, định dạng số có dấu phẩy. -->
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
-                                <Setter Property="TextAlignment" Value="Right"/> <!-- Giữ căn phải cho cột tiền để dễ đọc hơn -->
+                                <Setter Property="TextAlignment" Value="Right"/> <!-- Căn phải cho cột tiền để dễ đọc hơn. -->
                             </Style>
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
                 </DataGrid.Columns>
             </DataGrid>
 
-            <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Center" VerticalAlignment="Stretch"/>
+            <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Center" VerticalAlignment="Stretch"/> <!-- Thanh chia, cho phép người dùng kéo để thay đổi kích thước 2 cột. -->
 
-            <!-- Chi tiết hóa đơn -->
+            <!-- Cột 2: Khung xem trước chi tiết hóa đơn. -->
             <GroupBox Grid.Column="2" Header="Hóa đơn trước đó" FontWeight="SemiBold">
-                <local:InvoicePreviewControl x:Name="invoicePreview" Visibility="Collapsed">
+                <local:InvoicePreviewControl x:Name="invoicePreview" Visibility="Collapsed"> <!-- Control tùy chỉnh để hiển thị chi tiết hóa đơn. Ban đầu được ẩn đi. -->
                     <local:InvoicePreviewControl.LayoutTransform>
-                        <ScaleTransform ScaleX="0.7" ScaleY="0.7" />
+                        <ScaleTransform ScaleX="0.7" ScaleY="0.7" /> <!-- Thu nhỏ control xem trước để vừa với không gian. -->
                     </local:InvoicePreviewControl.LayoutTransform>
                 </local:InvoicePreviewControl>
             </GroupBox>

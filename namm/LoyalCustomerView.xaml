@@ -1,3 +1,6 @@
+﻿<!-- File này định nghĩa giao diện người dùng (UserControl) cho chức năng "Thống kê khách hàng thân thiết". -->
+<!-- Giao diện này cho phép người dùng xem danh sách khách hàng, tổng chi tiêu của họ, -->
+<!-- đồng thời thiết lập và quản lý các quy tắc giảm giá tự động. -->
 <UserControl x:Class="namm.LoyalCustomerView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -6,9 +9,10 @@
              xmlns:local="clr-namespace:namm"
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="1000"
-             FontFamily="Segoe UI" Loaded="UserControl_Loaded">
+             FontFamily="Segoe UI" Loaded="UserControl_Loaded"> <!-- Sự kiện Loaded sẽ được gọi khi control này được tải xong. -->
+    <!-- DockPanel là layout chính, cho phép các thành phần con "neo" vào các cạnh (Top, Bottom, Left, Right). -->
     <DockPanel Margin="10">
-        <!-- Tiêu đề -->
+        <!-- Phần tiêu đề của màn hình, được neo ở trên cùng (Dock="Top"). -->
         <Border DockPanel.Dock="Top" Padding="5" Margin="0,0,0,10" BorderBrush="LightGray" BorderThickness="0,0,0,1">
             <TextBlock Text="THỐNG KÊ KHÁCH HÀNG THÂN THIẾT" 
                        FontSize="20" 
@@ -17,52 +21,59 @@
                        HorizontalAlignment="Center"/>
         </Border>
 
-        <!-- Khu vực thiết lập giảm giá -->
+        <!-- Khu vực thiết lập các quy tắc giảm giá, được neo ở trên cùng, ngay dưới tiêu đề. -->
         <GroupBox DockPanel.Dock="Top" Header="Thiết lập các mức giảm giá" FontWeight="SemiBold" Margin="0,0,0,10">
             <Grid Margin="10">
+                <!-- Chia khu vực này thành 3 hàng. -->
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/> <!-- Hàng 0: Form để thêm quy tắc mới. -->
+                    <RowDefinition Height="*"/>    <!-- Hàng 1: Danh sách các quy tắc đã có. -->
+                    <RowDefinition Height="Auto"/> <!-- Hàng 2: Các nút điều khiển. -->
                 </Grid.RowDefinitions>
 
-                <!-- Form thêm quy tắc mới -->
+                <!-- Hàng 0: Form để người dùng nhập và thêm một quy tắc giảm giá mới. -->
                 <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
                     <TextBlock Text="Tiêu chí:" VerticalAlignment="Center" Margin="0,0,5,0"/>
-                    <ComboBox x:Name="cbCriteriaType" Width="120" VerticalContentAlignment="Center">
+                    <ComboBox x:Name="cbCriteriaType" Width="120" VerticalContentAlignment="Center"> <!-- Cho phép chọn tiêu chí: Số lần mua hoặc Tổng chi tiêu. -->
                         <ComboBoxItem Content="Số lần mua"/>
                         <ComboBoxItem Content="Tổng chi tiêu"/>
                     </ComboBox>
                     <TextBlock Text="Ngưỡng >" VerticalAlignment="Center" Margin="15,0,5,0"/>
-                    <TextBox x:Name="txtThreshold" Width="120" VerticalContentAlignment="Center"/>
+                    <TextBox x:Name="txtThreshold" Width="120" VerticalContentAlignment="Center"/> <!-- Ô nhập giá trị ngưỡng (ví dụ: 10 lần mua, 1,000,000 VNĐ). -->
                     <TextBlock Text="Giảm giá (%):" VerticalAlignment="Center" Margin="15,0,5,0"/>
-                    <TextBox x:Name="txtDiscountPercent" Width="80" VerticalContentAlignment="Center"/>
-                    <Button x:Name="btnAddRule" Content="Thêm mức" Width="100" Margin="15,0,0,0" Click="BtnAddRule_Click"/>
+                    <TextBox x:Name="txtDiscountPercent" Width="80" VerticalContentAlignment="Center"/> <!-- Ô nhập phần trăm giảm giá. -->
+                    <Button x:Name="btnAddRule" Content="Thêm mức" Width="100" Margin="15,0,0,0" Click="BtnAddRule_Click"/> <!-- Nút để thêm quy tắc. -->
                 </StackPanel>
 
-                <!-- Danh sách các quy tắc đã thêm -->
+                <!-- Hàng 1: Danh sách (ListView) hiển thị các quy tắc giảm giá đã được thêm. -->
                 <ListView Grid.Row="1" x:Name="lvDiscountRules" MaxHeight="150" HorizontalAlignment="Left" SelectionChanged="LvDiscountRules_SelectionChanged">
                     <ListView.Resources>
+                        <!-- Style để căn giữa tiêu đề các cột. -->
                         <Style TargetType="GridViewColumnHeader">
                             <Setter Property="HorizontalContentAlignment" Value="Center"/>
                         </Style>
+                        <!-- Style để đảm bảo item trong ListView chiếm hết chiều ngang. -->
                         <Style TargetType="ListViewItem">
                             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                         </Style>
                     </ListView.Resources>
+                    <!-- Sử dụng GridView để hiển thị dữ liệu dạng bảng. -->
                     <ListView.View>
                         <GridView>
+                            <!-- Cột đầu tiên chứa CheckBox để chọn. -->
                             <GridViewColumn Width="50">
                                 <GridViewColumn.Header>
-                                    <!-- Checkbox ở header để chọn/bỏ chọn tất cả -->
+                                    <!-- Checkbox ở header để chọn/bỏ chọn tất cả các quy tắc. -->
                                     <CheckBox Click="RuleHeaderCheckBox_Click" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                 </GridViewColumn.Header>
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
+                                        <!-- CheckBox cho mỗi dòng, IsChecked được binding với thuộc tính IsSelected của ListViewItem. -->
                                         <CheckBox IsChecked="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListViewItem}}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
+                            <!-- Cột "Tiêu chí". -->
                             <GridViewColumn Header="Tiêu chí" Width="150">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
@@ -70,6 +81,7 @@
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
+                            <!-- Cột "Ngưỡng", định dạng số có dấu phẩy ngăn cách. -->
                             <GridViewColumn Header="Ngưỡng" Width="150">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
@@ -77,6 +89,7 @@
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
+                            <!-- Cột "Giảm giá (%)". -->
                             <GridViewColumn Header="Giảm giá (%)" Width="100">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
@@ -88,35 +101,38 @@
                     </ListView.View>
                 </ListView>
 
-                <!-- Nút điều khiển -->
+                <!-- Hàng 2: Các nút điều khiển cho danh sách quy tắc. -->
                 <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+                    <!-- Nút này có vẻ như để áp dụng quy tắc cho tất cả khách hàng, nhưng logic có thể đã thay đổi. -->
                     <Button x:Name="btnApplyRuleToAll" Content="Áp dụng cho tất cả KH" Margin="0,0,10,0" Click="BtnApplyRuleToAll_Click" IsEnabled="{Binding ElementName=lvDiscountRules, Path=SelectedItems.Count, Converter={StaticResource NullToFalseConverter}}" Background="#28A745" Foreground="White"/>
+                    <!-- Nút xóa các quy tắc đã chọn. IsEnabled="False" ban đầu và sẽ được bật từ code-behind. -->
                     <Button x:Name="btnRemoveRule" Content="Xóa mức đã chọn" Margin="0,0,10,0" Click="BtnRemoveRule_Click" IsEnabled="False" Background="#DC3545" Foreground="White"/>
                 </StackPanel>
             </Grid>
         </GroupBox>
 
 
-        <!-- Bảng dữ liệu chính và Popup chi tiết -->
+        <!-- Phần còn lại của DockPanel, chứa bảng dữ liệu khách hàng. -->
         <Grid DockPanel.Dock="Bottom">
             <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>    <!-- Hàng 0: Bảng dữ liệu khách hàng. -->
+                <RowDefinition Height="Auto"/> <!-- Hàng 1: Nút xóa khách hàng. -->
             </Grid.RowDefinitions>
 
 
             <Grid.Resources>
-                <!-- Style để căn giữa nội dung trong các ô -->
+                <!-- Converter để chuyển đổi giá trị boolean (true/false) thành Visibility (Visible/Collapsed). -->
                 <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+                <!-- Style có thể tái sử dụng để căn giữa nội dung trong một ô TextBlock. -->
                 <Style x:Key="CenterCellStyle" TargetType="TextBlock">
                     <Setter Property="HorizontalAlignment" Value="Center" />
                 </Style>
             </Grid.Resources>
 
-            <!-- Popup để hiển thị chi tiết các mức giảm giá -->
+            <!-- Popup này có thể được dùng để hiển thị thông tin chi tiết, hiện tại chưa được sử dụng trong code-behind. -->
             <Popup x:Name="popupAppliedRules"
                    StaysOpen="False"/>
-            <!-- Bảng dữ liệu khách hàng -->
+            <!-- Hàng 0: Bảng (DataGrid) hiển thị danh sách khách hàng thân thiết. -->
             <DataGrid Grid.Row="0" x:Name="dgLoyalCustomers" 
                       AutoGenerateColumns="False" 
                       IsReadOnly="True"
@@ -125,33 +141,37 @@
                       GridLinesVisibility="Horizontal"
                       AlternatingRowBackground="#F5F5F5"
                       HorizontalContentAlignment="Center"
-                      LoadingRow="DgLoyalCustomers_LoadingRow">
+                      LoadingRow="DgLoyalCustomers_LoadingRow"> <!-- Sự kiện để đánh số thứ tự cho các dòng. -->
                 <DataGrid.RowStyle>
                     <Style TargetType="DataGridRow">
+                        <!-- Sự kiện này có vẻ như là một placeholder hoặc logic cũ, vì handler của nó trống. -->
                         <EventSetter Event="PreviewMouseLeftButtonDown" Handler="DataGridRow_PreviewMouseLeftButtonDown_Selection"/>
                     </Style>
                 </DataGrid.RowStyle>
                 <DataGrid.Resources>
-                    <!-- Căn giữa cho tiêu đề cột -->
+                    <!-- Style để căn giữa nội dung của tất cả các tiêu đề cột. -->
                     <Style TargetType="DataGridColumnHeader">
                         <Setter Property="HorizontalContentAlignment" Value="Center"/>
                     </Style>
                 </DataGrid.Resources>
+                <!-- Định nghĩa các cột sẽ hiển thị trong DataGrid. -->
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="STT" Binding="{Binding STT}" Width="0.5*" ElementStyle="{StaticResource CenterCellStyle}"/>
-                    <DataGridTextColumn Header="Tên khách hàng" Binding="{Binding CustomerName}" Width="2*" ElementStyle="{StaticResource CenterCellStyle}"/>
-                    <DataGridTextColumn Header="Mã Khách hàng" Binding="{Binding CustomerCode}" Width="1.5*" ElementStyle="{StaticResource CenterCellStyle}"/>
-                    <DataGridTextColumn Header="Số ĐT" Binding="{Binding PhoneNumber}" Width="1.2*" ElementStyle="{StaticResource CenterCellStyle}"/>
-                    <DataGridTextColumn Header="Địa chỉ" Binding="{Binding Address}" Width="2.5*" ElementStyle="{StaticResource CenterCellStyle}"/>
-                    <DataGridTextColumn Header="Số lần mua" Binding="{Binding PurchaseCount}" Width="1*" ElementStyle="{StaticResource CenterCellStyle}"/>
-                    <DataGridTextColumn Header="Tổng chi tiêu" Binding="{Binding TotalSpent, StringFormat={}{0:N0} VNĐ}" Width="1.5*" SortDirection="Descending" ElementStyle="{StaticResource CenterCellStyle}"/>
-                    <DataGridTextColumn Header="Mức giảm giá" Binding="{Binding AppliedRuleDescription}" Width="1.5*" ElementStyle="{StaticResource CenterCellStyle}"/>
-                    <DataGridTextColumn Header="Tiền được giảm" Binding="{Binding Discount, StringFormat={}{0:N0} VNĐ}" Width="1*" ElementStyle="{StaticResource CenterCellStyle}"/>
+                    <!-- Các cột được binding với dữ liệu từ DataTable trong code-behind. Width="*" cho phép cột co giãn theo tỷ lệ. -->
+                    <DataGridTextColumn Header="STT" Binding="{Binding STT}" Width="0.5*" ElementStyle="{StaticResource CenterCellStyle}"/> <!-- Số thứ tự. -->
+                    <DataGridTextColumn Header="Tên khách hàng" Binding="{Binding CustomerName}" Width="2*" ElementStyle="{StaticResource CenterCellStyle}"/> <!-- Tên khách hàng. -->
+                    <DataGridTextColumn Header="Mã Khách hàng" Binding="{Binding CustomerCode}" Width="1.5*" ElementStyle="{StaticResource CenterCellStyle}"/> <!-- Mã khách hàng. -->
+                    <DataGridTextColumn Header="Số ĐT" Binding="{Binding PhoneNumber}" Width="1.2*" ElementStyle="{StaticResource CenterCellStyle}"/> <!-- Số điện thoại. -->
+                    <DataGridTextColumn Header="Địa chỉ" Binding="{Binding Address}" Width="2.5*" ElementStyle="{StaticResource CenterCellStyle}"/> <!-- Địa chỉ. -->
+                    <DataGridTextColumn Header="Số lần mua" Binding="{Binding PurchaseCount}" Width="1*" ElementStyle="{StaticResource CenterCellStyle}"/> <!-- Tổng số lần mua hàng. -->
+                    <DataGridTextColumn Header="Tổng chi tiêu" Binding="{Binding TotalSpent, StringFormat={}{0:N0} VNĐ}" Width="1.5*" SortDirection="Descending" ElementStyle="{StaticResource CenterCellStyle}"/> <!-- Tổng số tiền đã chi, định dạng tiền tệ. -->
+                    <DataGridTextColumn Header="Mức giảm giá" Binding="{Binding AppliedRuleDescription}" Width="1.5*" ElementStyle="{StaticResource CenterCellStyle}"/> <!-- Mức giảm giá cao nhất khách hàng đạt được. -->
+                    <DataGridTextColumn Header="Tiền được giảm" Binding="{Binding Discount, StringFormat={}{0:N0} VNĐ}" Width="1*" ElementStyle="{StaticResource CenterCellStyle}"/> <!-- Tổng số tiền thực tế đã được giảm. -->
                 </DataGrid.Columns>
             </DataGrid>
 
-            <!-- Nút Xóa Khách hàng -->
+            <!-- Hàng 1: Nút để xóa các khách hàng đã được chọn trong DataGrid. -->
             <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+                <!-- Nút này chỉ được bật khi có ít nhất một khách hàng được chọn. -->
                 <Button x:Name="btnDeleteCustomer" Content="Xóa khách hàng đã chọn" Click="BtnDeleteCustomer_Click" 
                         IsEnabled="{Binding ElementName=dgLoyalCustomers, Path=SelectedItems.Count, Converter={StaticResource NullToFalseConverter}}" Background="#DC3545" Foreground="White"/>
             </StackPanel>

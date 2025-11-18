@@ -8,7 +8,9 @@
              d:DesignHeight="600" d:DesignWidth="400"
              FontFamily="Segoe UI" Background="White">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <!-- Layout chính của control, sẽ được đặt ảnh nền từ code-behind. -->
         <Grid x:Name="PreviewGrid" Margin="15">
+            <!-- Chia layout thành các hàng cho từng phần của hóa đơn. -->
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -16,7 +18,7 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <!-- Phần Header: Thông tin quán và hóa đơn -->
+            <!-- Hàng 0: Phần Header, chứa thông tin quán và tiêu đề hóa đơn. -->
             <StackPanel Grid.Row="0" HorizontalAlignment="Center" TextBlock.TextAlignment="Center">
                 <TextBlock Text="Quán Namm" FontSize="24" FontWeight="Bold" Foreground="#1A5276"/>
                 <TextBlock Text="Canteen Phenikaa, Yên Nghĩa, Hà Đông, Hà Nội" FontSize="12" Foreground="Gray"/>
@@ -24,12 +26,12 @@
                 <TextBlock Text="HÓA ĐƠN THANH TOÁN" FontSize="20" FontWeight="SemiBold" Margin="0,20,0,0"/>
             </StackPanel>
 
-            <!-- Phần thông tin chi tiết: Bàn, Khách hàng, Ngày -->
+            <!-- Hàng 1: Phần thông tin chi tiết của hóa đơn (Số HĐ, Bàn, Khách hàng, Ngày). -->
             <Border Grid.Row="1" BorderBrush="LightGray" BorderThickness="0,1,0,1" Margin="0,15" Padding="0,10">
                 <Grid HorizontalAlignment="Center">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/> <!-- Cột cho nhãn (ví dụ: "Số HĐ:"). -->
+                        <ColumnDefinition Width="Auto"/> <!-- Cột cho giá trị (ví dụ: "HD00123"). -->
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -39,6 +41,7 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
+                    <!-- Các TextBlock để hiển thị thông tin chi tiết, tên được đặt để gán dữ liệu từ code-behind. -->
                     <TextBlock Grid.Row="0" Grid.Column="0" Text="Số HĐ:" FontWeight="SemiBold" Margin="0,0,10,2" TextAlignment="Left"/>
                     <TextBlock Grid.Row="0" Grid.Column="1" x:Name="tbInvoiceId" Text="HD00123"/>
                     <TextBlock Grid.Row="1" Grid.Column="0" Text="Bàn:" FontWeight="SemiBold" Margin="0,0,10,2" TextAlignment="Left"/>
@@ -52,11 +55,12 @@
                 </Grid>
             </Border>
 
-            <!-- Danh sách các món ăn -->
+            <!-- Hàng 2: Bảng (DataGrid) hiển thị danh sách các món trong hóa đơn. -->
             <DataGrid Grid.Row="2" x:Name="dgBillItems" BorderThickness="0" HorizontalAlignment="Center"
                       AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False"
                       HeadersVisibility="Column" GridLinesVisibility="None" Background="Transparent">
                 <DataGrid.Resources>
+                    <!-- Định nghĩa các style để căn giữa nội dung trong bảng. -->
                     <Style TargetType="DataGridColumnHeader">
                         <Setter Property="HorizontalContentAlignment" Value="Center"/>
                         <Setter Property="FontWeight" Value="SemiBold"/>
@@ -65,6 +69,7 @@
                         <Setter Property="HorizontalAlignment" Value="Center"/>
                     </Style>
                 </DataGrid.Resources>
+                <!-- Định nghĩa các cột sẽ hiển thị trong DataGrid. -->
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Tên món" Binding="{Binding DrinkName}" Width="160" ElementStyle="{StaticResource CenterCell}"/>
                     <DataGridTextColumn Header="SL" Binding="{Binding Quantity}" Width="40" ElementStyle="{StaticResource CenterCell}"/>
@@ -73,21 +78,21 @@
                 </DataGrid.Columns>
             </DataGrid>
 
-            <!-- Phần tổng tiền -->
+            <!-- Hàng 3: Phần tổng kết, bao gồm tổng tiền hàng, giảm giá và tổng cộng. -->
             <StackPanel Grid.Row="3" Margin="0,10,0,0">
                 <Separator/>
                 <Grid Margin="0,10,0,0">
                     <TextBlock Text="Tổng tiền hàng" FontSize="14"/>
-                    <TextBlock x:Name="tbSubTotal" Text="150,000" FontSize="14" HorizontalAlignment="Right"/>
+                    <TextBlock x:Name="tbSubTotal" Text="150,000" FontSize="14" HorizontalAlignment="Right"/> <!-- Tổng tiền trước khi giảm giá. -->
                 </Grid>
-                <Grid Margin="0,5,0,0" x:Name="gridDiscount" Visibility="Collapsed">
+                <Grid Margin="0,5,0,0" x:Name="gridDiscount" Visibility="Collapsed"> <!-- Phần giảm giá, ban đầu được ẩn đi. -->
                     <TextBlock Text="Giảm giá" FontSize="14" Foreground="DarkRed"/>
-                    <TextBlock x:Name="tbDiscountAmount" Text="-15,000" FontSize="14" HorizontalAlignment="Right" Foreground="DarkRed"/>
+                    <TextBlock x:Name="tbDiscountAmount" Text="-15,000" FontSize="14" HorizontalAlignment="Right" Foreground="DarkRed"/> <!-- Số tiền được giảm. -->
                 </Grid>
                 <Separator Margin="0,5,0,5"/>
                 <Grid Margin="0,10,0,0">
                     <TextBlock Text="TỔNG CỘNG" FontSize="16" FontWeight="Bold"/>
-                    <TextBlock x:Name="tbTotalAmount" Text="150,000 VNĐ" FontSize="16" FontWeight="Bold" HorizontalAlignment="Right"/>
+                    <TextBlock x:Name="tbTotalAmount" Text="150,000 VNĐ" FontSize="16" FontWeight="Bold" HorizontalAlignment="Right"/> <!-- Tổng tiền cuối cùng phải trả. -->
                 </Grid>
                 <TextBlock Text="Cảm ơn quý khách và hẹn gặp lại!" FontStyle="Italic" TextAlignment="Center" Margin="0,20,0,0"/>
             </StackPanel>

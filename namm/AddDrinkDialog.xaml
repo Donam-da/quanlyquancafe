@@ -4,11 +4,15 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d"
-        Title="Thêm món" Height="180" Width="300"  <!-- Tiêu đề, chiều cao và chiều rộng của cửa sổ. -->
-        WindowStartupLocation="CenterOwner"       <!-- Cửa sổ sẽ xuất hiện ở giữa cửa sổ cha đã gọi nó. -->
-        WindowStyle="ToolWindow"                  <!-- Kiểu cửa sổ đơn giản, thường không có nút thu nhỏ/phóng to. -->
-        Loaded="Window_Loaded">                   <!-- Sự kiện được gọi khi cửa sổ đã được tải xong. -->
+        mc:Ignorable="d"        
+        Title="Thêm món" Height="180" Width="300"
+        WindowStartupLocation="CenterOwner"
+        WindowStyle="ToolWindow"
+        Loaded="Window_Loaded">
+    <!-- Tiêu đề, chiều cao và chiều rộng của cửa sổ. -->
+    <!-- Cửa sổ sẽ xuất hiện ở giữa cửa sổ cha đã gọi nó. -->
+    <!-- Kiểu cửa sổ đơn giản, thường không có nút thu nhỏ/phóng to. -->
+    <!-- Sự kiện được gọi khi cửa sổ đã được tải xong. -->
     <!-- Grid là layout chính, chia không gian thành các hàng và cột. Margin="15" tạo khoảng cách 15 pixel xung quanh. -->
     <Grid Margin="15">
         <!-- Định nghĩa 3 hàng cho layout. Chiều cao "Auto" tự điều chỉnh theo nội dung, "*" chiếm phần còn lại. -->

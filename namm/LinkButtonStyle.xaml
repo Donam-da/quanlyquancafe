@@ -1,9 +1,19 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+﻿<!-- File này định nghĩa một "Từ điển tài nguyên" (ResourceDictionary). -->
+<!-- Nó chứa một Style có thể tái sử dụng để biến một Button bình thường thành một thứ trông giống như một siêu liên kết (hyperlink). -->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- Định nghĩa một Style với khóa (key) là "LinkButton", áp dụng cho các đối tượng kiểu Button. -->
     <Style x:Key="LinkButton" TargetType="Button">
+        <!-- Setter này thay thế hoàn toàn giao diện mặc định của Button. -->
         <Setter Property="Template">
             <Setter.Value>
+                <!-- ControlTemplate định nghĩa cấu trúc và giao diện mới cho Button. -->
                 <ControlTemplate TargetType="Button">
+                    <!-- Thay vì hình chữ nhật có viền, Button giờ sẽ được hiển thị như một TextBlock. -->
+                    <!-- TextDecorations="Underline": Tạo gạch chân cho văn bản. -->
+                    <!-- Cursor="Hand": Đổi con trỏ chuột thành hình bàn tay khi di chuột qua. -->
+                    <!-- Foreground="Blue": Đặt màu chữ thành màu xanh. -->
+                    <!-- Text="{TemplateBinding Content}": Lấy nội dung của Button (ví dụ: <Button Content="Xóa"/>) và hiển thị nó làm văn bản của TextBlock. -->
                     <TextBlock TextDecorations="Underline" Cursor="Hand" Foreground="Blue" Text="{TemplateBinding Content}"/>
                 </ControlTemplate>
             </Setter.Value>

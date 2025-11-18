@@ -7,45 +7,47 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              FontFamily="Segoe UI" Loaded="UserControl_Loaded">
+    <!-- Layout chính, chia thành 2 cột: Cài đặt (trái) và Xem trước (phải). -->
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <!-- Cột trái: Các tùy chọn -->
+        <!-- Cột 0 (bên trái): Chứa các tùy chọn cài đặt. -->
         <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="20">
-            <!-- Đặt HorizontalAlignment để StackPanel được căn giữa nếu có không gian thừa -->
             <StackPanel Width="360" HorizontalAlignment="Center">
                 <TextBlock Text="THIẾT LẬP GIAO DIỆN ĐĂNG NHẬP" FontSize="20" FontWeight="Bold" Margin="0,0,0,20" TextWrapping="Wrap"/>
 
+                <!-- GroupBox cho Tùy chỉnh chung (màu nền chính). -->
                 <GroupBox Header="Tùy chỉnh chung" Padding="10" Margin="0,0,0,15">
                     <StackPanel>
                         <TextBlock Text="Chọn màu cơ bản:" Margin="0,0,0,5" FontStyle="Italic"/>
-                        <WrapPanel x:Name="appColorPalette"/>
+                        <WrapPanel x:Name="appColorPalette"/> <!-- Bảng màu để chọn nhanh. -->
 
                         <TextBlock Text="Độ sáng:" Margin="0,10,0,2"/>
-                        <Slider x:Name="sliderAppLightness" Minimum="-0.5" Maximum="0.5" Value="0" TickFrequency="0.1" ValueChanged="AppColorAdjustment_Changed"/>
+                        <Slider x:Name="sliderAppLightness" Minimum="-0.5" Maximum="0.5" Value="0" TickFrequency="0.1" ValueChanged="AppColorAdjustment_Changed"/> <!-- Thanh trượt độ sáng. -->
 
                         <TextBlock Text="Độ mờ (Alpha):" Margin="0,10,0,2"/>
-                        <Slider x:Name="sliderAppAlpha" Minimum="0" Maximum="1" Value="1" TickFrequency="0.1" ValueChanged="AppColorAdjustment_Changed"/>
+                        <Slider x:Name="sliderAppAlpha" Minimum="0" Maximum="1" Value="1" TickFrequency="0.1" ValueChanged="AppColorAdjustment_Changed"/> <!-- Thanh trượt độ trong suốt. -->
 
-                        <!-- Xem trước màu và mã Hex -->
+                        <!-- Hiển thị màu xem trước và ô nhập mã màu Hex. -->
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <Rectangle Grid.Column="0" x:Name="rectAppColorPreview" Width="50" Height="25" Stroke="Black" StrokeThickness="1" Margin="0,0,10,0"/>
-                            <TextBox Grid.Column="1" x:Name="txtAppBackgroundColorHex" VerticalContentAlignment="Center" LostFocus="HexColor_LostFocus" KeyDown="HexColor_KeyDown"/>
+                            <Rectangle Grid.Column="0" x:Name="rectAppColorPreview" Width="50" Height="25" Stroke="Black" StrokeThickness="1" Margin="0,0,10,0"/> <!-- Ô xem trước màu. -->
+                            <TextBox Grid.Column="1" x:Name="txtAppBackgroundColorHex" VerticalContentAlignment="Center" LostFocus="HexColor_LostFocus" KeyDown="HexColor_KeyDown"/> <!-- Ô nhập mã màu Hex. -->
                         </Grid>
                     </StackPanel>
                 </GroupBox>
 
+                <!-- GroupBox cho Tùy chỉnh Panel Trái (màu nền icon). -->
                 <GroupBox Header="Tùy chỉnh Panel Trái" Padding="10">
                     <StackPanel>
                         <TextBlock Text="Chọn màu cơ bản:" Margin="0,0,0,5" FontStyle="Italic"/>
-                        <WrapPanel x:Name="loginPanelColorPalette"/>
+                        <WrapPanel x:Name="loginPanelColorPalette"/> <!-- Bảng màu để chọn nhanh. -->
 
                         <TextBlock Text="Độ sáng:" Margin="0,10,0,2"/>
                         <Slider x:Name="sliderLoginPanelLightness" Minimum="-0.5" Maximum="0.5" Value="0" TickFrequency="0.1" ValueChanged="LoginPanelColorAdjustment_Changed"/>
@@ -53,7 +55,7 @@
                         <TextBlock Text="Độ mờ (Alpha):" Margin="0,10,0,2"/>
                         <Slider x:Name="sliderLoginPanelAlpha" Minimum="0" Maximum="1" Value="1" TickFrequency="0.1" ValueChanged="LoginPanelColorAdjustment_Changed"/>
 
-                        <!-- Xem trước màu và mã Hex -->
+                        <!-- Hiển thị màu xem trước và ô nhập mã màu Hex. -->
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
@@ -65,34 +67,32 @@
                     </StackPanel>
                 </GroupBox>
 
-
+                <!-- Các nút hành động chính. -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,30,0,0">
-                    <Button x:Name="btnSave" Content="Lưu cài đặt" Width="120" Height="35" Margin="5" Background="#28A745" Foreground="White" Click="BtnSave_Click"/>
-                    <Button x:Name="btnReset" Content="Đặt lại mặc định" Width="120" Height="35" Margin="5" Background="#DC3545" Foreground="White" Click="BtnReset_Click"/>
+                    <Button x:Name="btnSave" Content="Lưu cài đặt" Width="120" Height="35" Margin="5" Background="#28A745" Foreground="White" Click="BtnSave_Click"/> <!-- Nút Lưu. -->
+                    <Button x:Name="btnReset" Content="Đặt lại mặc định" Width="120" Height="35" Margin="5" Background="#DC3545" Foreground="White" Click="BtnReset_Click"/> <!-- Nút Đặt lại. -->
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>
 
-        <!-- Cột phải: Xem trước -->
+        <!-- Cột 1 (bên phải): Chứa khu vực xem trước và quản lý ảnh. -->
         <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,20,20,20">
             <StackPanel>
-            <!-- Phần xem trước -->
+            <!-- Khung xem trước giao diện đăng nhập. -->
             <GroupBox x:Name="previewGroupBox" Header="Xem trước" Padding="10" Margin="0,0,0,15">
-                <!-- Đặt kích thước cố định cho phần xem trước để có tỷ lệ giống màn hình đăng nhập thật -->
                 <Border Background="#F5EFE6" CornerRadius="5" Width="490" Height="252" VerticalAlignment="Center" HorizontalAlignment="Center">
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <!-- Cột icon sẽ được điều chỉnh kích thước từ code -->
-                            <ColumnDefinition x:Name="previewIconColumn" Width="2*"/> <!-- Luôn giữ tỷ lệ 40% -->
+                            <ColumnDefinition x:Name="previewIconColumn" Width="2*"/> <!-- Cột icon, chiếm 2/5. -->
                             <ColumnDefinition Width="3*"/>
                         </Grid.ColumnDefinitions>
 
+                        <!-- Nền của icon, màu sắc sẽ được cập nhật động. -->
                         <Border x:Name="previewIconBorder" Grid.Column="0" Background="#D2B48C">
-                            <Image x:Name="imgPreview" Source="pack://application:,,,/Resources/login_icon.png" 
-                                   Stretch="Uniform" Margin="30"/>
+                            <Image x:Name="imgPreview" Source="pack://application:,,,/Resources/login_icon.png" Stretch="Uniform" Margin="30"/> <!-- Ảnh icon xem trước. -->
                         </Border>
 
-                        <!-- Form đăng nhập giả để minh họa -->
+                        <!-- Form đăng nhập giả để minh họa bố cục. -->
                         <StackPanel Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center">
                             <TextBlock Text="ĐĂNG NHẬP HỆ THỐNG" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
                             <Rectangle Height="25" Width="200" Fill="WhiteSmoke" Margin="5"/>
@@ -103,44 +103,46 @@
                 </Border>
             </GroupBox>
 
-            <!-- Phần tùy chỉnh Icon -->
+            <!-- Khung tùy chỉnh Icon. -->
             <GroupBox Header="Tùy chỉnh Icon" Padding="10" Margin="0,0,0,15">
                 <StackPanel>
                     <StackPanel Orientation="Horizontal">
-                        <Button x:Name="btnSelectImage" Content="Chọn ảnh..." Width="120" HorizontalAlignment="Left" Click="BtnSelectImage_Click" />
-                        <Button x:Name="btnAddImageToLibrary" Content="Thêm vào thư viện" Width="120" Margin="10,0,0,0" Click="BtnAddImageToLibrary_Click" IsEnabled="False"/>
+                        <Button x:Name="btnSelectImage" Content="Chọn ảnh..." Width="120" HorizontalAlignment="Left" Click="BtnSelectImage_Click" /> <!-- Nút mở hộp thoại chọn file ảnh. -->
+                        <Button x:Name="btnAddImageToLibrary" Content="Thêm vào thư viện" Width="120" Margin="10,0,0,0" Click="BtnAddImageToLibrary_Click" IsEnabled="False"/> <!-- Nút thêm ảnh mới vào CSDL. -->
                     </StackPanel>
                     <TextBlock Text="Đường dẫn ảnh:" Margin="0,10,0,2" FontStyle="Italic"/>
-                    <TextBlock x:Name="txtImagePath" Text="(Chưa chọn ảnh nào)" TextWrapping="Wrap" Background="#f0f0f0" Padding="2"/>
+                    <TextBlock x:Name="txtImagePath" Text="(Chưa chọn ảnh nào)" TextWrapping="Wrap" Background="#f0f0f0" Padding="2"/> <!-- Hiển thị đường dẫn hoặc trạng thái ảnh. -->
                 </StackPanel>
             </GroupBox>
 
-            <!-- Phần ảnh đã lưu -->
+            <!-- Khung thư viện ảnh đã lưu trong CSDL. -->
             <GroupBox Header="Chọn từ ảnh đã lưu" Padding="10">
-                <ListView x:Name="lvSavedImages" Height="150" SelectionMode="Multiple" SelectionChanged="LvSavedImages_SelectionChanged">
+                <ListView x:Name="lvSavedImages" Height="150" SelectionMode="Multiple" SelectionChanged="LvSavedImages_SelectionChanged"> <!-- ListView hiển thị các ảnh. -->
                     <ListView.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <WrapPanel Orientation="Horizontal"/>
+                            <WrapPanel Orientation="Horizontal"/> <!-- Sắp xếp các ảnh theo chiều ngang. -->
                         </ItemsPanelTemplate>
                     </ListView.ItemsPanel>
                     <ListView.ItemTemplate>
+                        <!-- Template cho mỗi item ảnh trong thư viện. -->
                         <DataTemplate>
                             <Border BorderBrush="Gray" BorderThickness="1" Margin="3" CornerRadius="3">
                                 <StackPanel Orientation="Vertical" Width="80" ToolTip="{Binding ImageName}">
-                                    <Image Source="{Binding Thumbnail}" Width="70" Height="70" Stretch="Uniform" Margin="5"/>
-                                    <TextBlock Text="{Binding ImageName}" TextTrimming="CharacterEllipsis" HorizontalAlignment="Center" FontSize="10" Margin="0,0,0,5"/>
+                                    <Image Source="{Binding Thumbnail}" Width="70" Height="70" Stretch="Uniform" Margin="5"/> <!-- Ảnh thu nhỏ. -->
+                                    <TextBlock Text="{Binding ImageName}" TextTrimming="CharacterEllipsis" HorizontalAlignment="Center" FontSize="10" Margin="0,0,0,5"/> <!-- Tên ảnh. -->
                                 </StackPanel>
                             </Border>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
                 <GroupBox.HeaderTemplate>
+                    <!-- Template cho header của GroupBox, chứa các nút quản lý thư viện. -->
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="Chọn từ ảnh đã lưu" VerticalAlignment="Center"/>
-                            <Button x:Name="btnSelectAll" Content="Chọn tất cả" Margin="20,0,5,0" Padding="5,1" Click="BtnSelectAll_Click"/>
-                            <Button x:Name="btnDeselectAll" Content="Bỏ chọn" Margin="0,0,5,0" Padding="5,1" Click="BtnDeselectAll_Click"/>
-                            <Button x:Name="btnDeleteSelected" Content="Xóa đã chọn" Margin="0,0,0,0" Padding="5,1" Background="#DC3545" Foreground="White" Click="BtnDeleteSelectedImages_Click"/>
+                            <Button x:Name="btnSelectAll" Content="Chọn tất cả" Margin="20,0,5,0" Padding="5,1" Click="BtnSelectAll_Click"/> <!-- Nút chọn tất cả ảnh. -->
+                            <Button x:Name="btnDeselectAll" Content="Bỏ chọn" Margin="0,0,5,0" Padding="5,1" Click="BtnDeselectAll_Click"/> <!-- Nút bỏ chọn. -->
+                            <Button x:Name="btnDeleteSelected" Content="Xóa đã chọn" Margin="0,0,0,0" Padding="5,1" Background="#DC3545" Foreground="White" Click="BtnDeleteSelectedImages_Click"/> <!-- Nút xóa ảnh đã chọn. -->
                         </StackPanel>
                     </DataTemplate>
                 </GroupBox.HeaderTemplate>

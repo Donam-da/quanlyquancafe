@@ -6,8 +6,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:namm"
              mc:Ignorable="d"
-             d:DesignHeight="550" d:DesignWidth="1000"  <!-- Chiều cao và chiều rộng thiết kế (chỉ để xem trước). -->
-             Loaded="UserControl_Loaded"> <!-- Sự kiện được gọi khi UserControl được tải xong. -->
+             d:DesignHeight="550" d:DesignWidth="1000"
+             Loaded="UserControl_Loaded">
+    <!-- Chiều cao và chiều rộng thiết kế (chỉ để xem trước). -->
+    <!-- Sự kiện được gọi khi UserControl được tải xong. -->
     <!-- Layout chính, chia giao diện thành 2 cột. -->
     <Grid Margin="10">
         <!-- Định nghĩa 2 cột: cột trái chiếm phần lớn không gian (*), cột phải rộng 350 pixel. -->
@@ -24,9 +26,11 @@
                 <TextBox x:Name="txtSearch" Margin="0,0,0,5" Height="25" ToolTip="Nhập tên loại đồ uống để tìm kiếm" TextChanged="TxtSearch_TextChanged"/> <!-- Ô tìm kiếm, gọi sự kiện khi nội dung thay đổi. -->
             </StackPanel>
             <!-- Bảng (DataGrid) hiển thị danh sách các loại đồ uống. -->
-            <DataGrid x:Name="dgCategories" AutoGenerateColumns="False" IsReadOnly="True"                      
-                      SelectionMode="Single" SelectionChanged="DgCategories_SelectionChanged" <!-- Chỉ cho phép chọn 1 dòng, gọi sự kiện khi lựa chọn thay đổi. -->
-                      LoadingRow="DgCategories_LoadingRow"> <!-- Sự kiện được gọi khi một dòng mới đang được tải, dùng để đánh số thứ tự. -->
+            <DataGrid x:Name="dgCategories" AutoGenerateColumns="False" IsReadOnly="True"
+                      SelectionMode="Single" SelectionChanged="DgCategories_SelectionChanged"
+                      LoadingRow="DgCategories_LoadingRow">
+                <!-- Chỉ cho phép chọn 1 dòng, gọi sự kiện khi lựa chọn thay đổi. -->
+                <!-- Sự kiện được gọi khi một dòng mới đang được tải, dùng để đánh số thứ tự. -->
                 <!-- Định nghĩa các cột sẽ hiển thị trong DataGrid. -->
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="STT" Binding="{Binding STT}" Width="50" /> <!-- Cột số thứ tự. -->

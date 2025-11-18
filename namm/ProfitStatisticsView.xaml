@@ -1,3 +1,4 @@
+<!-- Đây là file XAML định nghĩa giao diện người dùng (UI) cho chức năng "Thống kê lợi nhuận". -->
 <UserControl x:Class="namm.ProfitStatisticsView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -6,118 +7,134 @@
              xmlns:local="clr-namespace:namm"
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="1000"
-             FontFamily="Segoe UI" Loaded="UserControl_Loaded">
+             FontFamily="Segoe UI" Loaded="UserControl_Loaded"> <!-- Sự kiện Loaded sẽ được gọi khi control này được tải xong. -->
+    <!-- DockPanel là layout chính, cho phép neo các phần tử vào các cạnh. -->
     <DockPanel Margin="10">
-        <!-- Tiêu đề và bộ lọc -->
+        <!-- Phần trên cùng của DockPanel, chứa tiêu đề, bộ lọc ngày và phần tóm tắt tổng quan. -->
         <StackPanel DockPanel.Dock="Top">
+            <!-- Tiêu đề chính của màn hình. -->
             <TextBlock Text="THỐNG KÊ LỢI NHUẬN" 
                        FontSize="20" 
                        FontWeight="Bold" 
                        Foreground="#2E4053" 
                        HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,10"/>
 
+            <!-- Border chứa bộ lọc ngày và các thông số tổng hợp. -->
             <Border Padding="10" Margin="0,0,0,10" BorderBrush="LightGray" BorderThickness="0,0,0,1">
+                <!-- Grid để sắp xếp các phần tử theo hàng và cột. -->
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/> <!-- Cột cho nhãn "Từ ngày:" -->
+                        <ColumnDefinition Width="Auto"/> <!-- Cột cho DatePicker bắt đầu -->
+                        <ColumnDefinition Width="Auto"/> <!-- Cột cho nhãn "Đến ngày:" -->
+                        <ColumnDefinition Width="Auto"/> <!-- Cột cho DatePicker kết thúc -->
+                        <ColumnDefinition Width="Auto"/> <!-- Cột cho nút "Lọc" -->
+                        <ColumnDefinition Width="*"/>    <!-- Cột cho phần tóm tắt, chiếm hết không gian còn lại -->
                     </Grid.ColumnDefinitions>
 
+                    <!-- Các control để lọc theo khoảng thời gian. -->
                     <TextBlock Grid.Column="0" Text="Từ ngày:" VerticalAlignment="Center" Margin="5"/>
-                    <DatePicker Grid.Column="1" x:Name="dpStartDate" Width="120" VerticalContentAlignment="Center" SelectedDateChanged="DpStartDate_SelectedDateChanged"/>
+                    <DatePicker Grid.Column="1" x:Name="dpStartDate" Width="120" VerticalContentAlignment="Center" SelectedDateChanged="DpStartDate_SelectedDateChanged"/> <!-- DatePicker để chọn ngày bắt đầu. -->
                     <TextBlock Grid.Column="2" Text="Đến ngày:" VerticalAlignment="Center" Margin="15,5,5,5"/>
-                    <DatePicker Grid.Column="3" x:Name="dpEndDate" Width="120" VerticalContentAlignment="Center"/>
-                    <Button Grid.Column="4" x:Name="btnFilter" Content="Lọc" Width="80" Height="30" Margin="15,0" Click="BtnFilter_Click"/>
+                    <DatePicker Grid.Column="3" x:Name="dpEndDate" Width="120" VerticalContentAlignment="Center"/> <!-- DatePicker để chọn ngày kết thúc. -->
+                    <Button Grid.Column="4" x:Name="btnFilter" Content="Lọc" Width="80" Height="30" Margin="15,0" Click="BtnFilter_Click"/> <!-- Nút để thực hiện lọc dữ liệu. -->
 
-                    <!-- Phần tóm tắt -->
+                    <!-- Phần tóm tắt các số liệu tổng quan, được đặt ở bên phải. -->
                     <StackPanel Grid.Column="5" Orientation="Horizontal" HorizontalAlignment="Right">
                         <StackPanel Margin="10,0">
                             <TextBlock Text="Tổng Doanh thu" HorizontalAlignment="Center" Foreground="Gray"/>
-                            <TextBlock x:Name="tbTotalRevenue" Text="0 VNĐ" HorizontalAlignment="Center" FontWeight="Bold" FontSize="16" Foreground="DarkBlue"/>
+                            <TextBlock x:Name="tbTotalRevenue" Text="0 VNĐ" HorizontalAlignment="Center" FontWeight="Bold" FontSize="16" Foreground="DarkBlue"/> <!-- Hiển thị tổng doanh thu. -->
                         </StackPanel>
                         <TextBlock Text="-" VerticalAlignment="Center" FontSize="20" Margin="5,10,5,0"/>
                         <StackPanel Margin="10,0">
                             <TextBlock Text="Tổng Vốn" HorizontalAlignment="Center" Foreground="Gray"/>
-                            <TextBlock x:Name="tbTotalCost" Text="0 VNĐ" HorizontalAlignment="Center" FontWeight="Bold" FontSize="16" Foreground="DarkRed"/>
+                            <TextBlock x:Name="tbTotalCost" Text="0 VNĐ" HorizontalAlignment="Center" FontWeight="Bold" FontSize="16" Foreground="DarkRed"/> <!-- Hiển thị tổng vốn. -->
                         </StackPanel>
                         <TextBlock Text="=" VerticalAlignment="Center" FontSize="20" Margin="5,10,5,0"/>
                         <StackPanel Margin="10,0">
                             <TextBlock Text="Tổng Lợi nhuận" HorizontalAlignment="Center" Foreground="Gray"/>
-                            <TextBlock x:Name="tbTotalProfit" Text="0 VNĐ" HorizontalAlignment="Center" FontWeight="Bold" FontSize="18" Foreground="DarkGreen"/>
+                            <TextBlock x:Name="tbTotalProfit" Text="0 VNĐ" HorizontalAlignment="Center" FontWeight="Bold" FontSize="18" Foreground="DarkGreen"/> <!-- Hiển thị tổng lợi nhuận. -->
                         </StackPanel>
                     </StackPanel>
                 </Grid>
             </Border>
         </StackPanel>
 
-        <!-- Bộ lọc cột -->
+        <!-- Khu vực chứa các bộ lọc chi tiết hơn (theo tên, kiểu, loại đồ uống). -->
         <Border DockPanel.Dock="Top" Padding="5" Margin="0,0,0,5">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/> <!-- Nhãn "Tên đồ uống:" -->
+                    <ColumnDefinition Width="*"/>    <!-- ComboBox Tên đồ uống -->
+                    <ColumnDefinition Width="Auto"/> <!-- Nhãn "Kiểu:" -->
+                    <ColumnDefinition Width="*"/>    <!-- ComboBox Kiểu -->
+                    <ColumnDefinition Width="Auto"/> <!-- Nhãn "Loại:" -->
+                    <ColumnDefinition Width="*"/>    <!-- ComboBox Loại -->
                 </Grid.ColumnDefinitions>
 
+                <!-- ComboBox để lọc theo tên đồ uống. -->
                 <TextBlock Grid.Column="0" Text="Tên đồ uống:" VerticalAlignment="Center" Margin="0,0,5,0"/>
                 <ComboBox Grid.Column="1" x:Name="cbFilterDrinkName" SelectionChanged="Filters_Changed" DisplayMemberPath="Name" SelectedValuePath="ID"/>
 
+                <!-- ComboBox để lọc theo kiểu (Pha chế/Nguyên bản). -->
                 <TextBlock Grid.Column="2" Text="Kiểu:" VerticalAlignment="Center" Margin="10,0,5,0"/>
                 <ComboBox Grid.Column="3" x:Name="cbFilterDrinkType" SelectionChanged="Filters_Changed"/>
 
+                <!-- ComboBox để lọc theo loại đồ uống (Cafe, Trà sữa...). -->
                 <TextBlock Grid.Column="4" Text="Loại:" VerticalAlignment="Center" Margin="10,0,5,0"/>
                 <ComboBox Grid.Column="5" x:Name="cbFilterCategory" SelectionChanged="Filters_Changed" DisplayMemberPath="Name" SelectedValuePath="ID"/>
 
             </Grid>
         </Border>
 
-        <!-- Bảng dữ liệu -->
+        <!-- Bảng dữ liệu (DataGrid) để hiển thị kết quả thống kê chi tiết. -->
         <DataGrid x:Name="dgProfitStats" 
                   AutoGenerateColumns="False" 
                   IsReadOnly="True"
                   CanUserSortColumns="True"
                   GridLinesVisibility="Horizontal"
-                  AlternatingRowBackground="#F5F5F5">
+                  AlternatingRowBackground="#F5F5F5"> <!-- Màu nền xen kẽ cho các dòng để dễ đọc. -->
+            <!-- Định nghĩa các Style áp dụng cho DataGrid này. -->
             <DataGrid.Resources>
+                <!-- Style để căn giữa nội dung của tất cả các tiêu đề cột. -->
                 <Style TargetType="DataGridColumnHeader">
                     <Setter Property="HorizontalContentAlignment" Value="Center"/>
                 </Style>
+                <!-- Style có thể tái sử dụng để căn giữa nội dung trong một ô TextBlock. -->
                 <Style x:Key="CenterCellStyle" TargetType="TextBlock">
                     <Setter Property="HorizontalAlignment" Value="Center" />
                 </Style>
+                <!-- Style có thể tái sử dụng để căn phải nội dung trong một ô TextBlock. -->
                 <Style x:Key="RightCellStyle" TargetType="TextBlock">
                     <Setter Property="HorizontalAlignment" Value="Right" />
                     <Setter Property="Margin" Value="0,0,5,0"/>
                 </Style>
             </DataGrid.Resources>
+            <!-- Định nghĩa các cột sẽ hiển thị trong DataGrid. -->
             <DataGrid.Columns>
-                <DataGridTextColumn Header="STT" Binding="{Binding STT}" Width="0.5*" ElementStyle="{StaticResource CenterCellStyle}"/>
-                <DataGridTextColumn Header="Tên đồ uống" Binding="{Binding DrinkName}" Width="2.5*" ElementStyle="{StaticResource CenterCellStyle}"/>
-                <DataGridTextColumn Header="Kiểu" Binding="{Binding DrinkType}" Width="1*" ElementStyle="{StaticResource CenterCellStyle}"/>
-                <DataGridTextColumn Header="SL Bán" Binding="{Binding TotalQuantitySold}" Width="0.8*" ElementStyle="{StaticResource CenterCellStyle}"/>
-                <DataGridTextColumn Header="Giá vốn (đơn vị)" Binding="{Binding UnitCost, StringFormat={}{0:N0}}" Width="1.2*" ElementStyle="{StaticResource CenterCellStyle}"/>
-                <DataGridTextColumn Header="Tổng Vốn" Binding="{Binding TotalCost, StringFormat={}{0:N0} VNĐ}" Width="1.2*" ElementStyle="{StaticResource CenterCellStyle}"/>
-                <DataGridTextColumn Header="Doanh thu" Binding="{Binding TotalRevenue, StringFormat={}{0:N0} VNĐ}" Width="1.2*" ElementStyle="{StaticResource CenterCellStyle}"/>
+                <!-- Binding được dùng để liên kết cột với thuộc tính trong DataTable ở code-behind. -->
+                <DataGridTextColumn Header="STT" Binding="{Binding STT}" Width="0.5*" ElementStyle="{StaticResource CenterCellStyle}"/> <!-- Cột số thứ tự. -->
+                <DataGridTextColumn Header="Tên đồ uống" Binding="{Binding DrinkName}" Width="2.5*" ElementStyle="{StaticResource CenterCellStyle}"/> <!-- Cột tên đồ uống. -->
+                <DataGridTextColumn Header="Kiểu" Binding="{Binding DrinkType}" Width="1*" ElementStyle="{StaticResource CenterCellStyle}"/> <!-- Cột kiểu (Pha chế/Nguyên bản). -->
+                <DataGridTextColumn Header="SL Bán" Binding="{Binding TotalQuantitySold}" Width="0.8*" ElementStyle="{StaticResource CenterCellStyle}"/> <!-- Cột số lượng bán. -->
+                <DataGridTextColumn Header="Giá vốn (đơn vị)" Binding="{Binding UnitCost, StringFormat={}{0:N0}}" Width="1.2*" ElementStyle="{StaticResource CenterCellStyle}"/> <!-- Cột giá vốn trên mỗi đơn vị. -->
+                <DataGridTextColumn Header="Tổng Vốn" Binding="{Binding TotalCost, StringFormat={}{0:N0} VNĐ}" Width="1.2*" ElementStyle="{StaticResource CenterCellStyle}"/> <!-- Cột tổng vốn. -->
+                <DataGridTextColumn Header="Doanh thu" Binding="{Binding TotalRevenue, StringFormat={}{0:N0} VNĐ}" Width="1.2*" ElementStyle="{StaticResource CenterCellStyle}"/> <!-- Cột tổng doanh thu. -->
+                <!-- Cột lợi nhuận, được sắp xếp giảm dần mặc định và có style riêng. -->
                 <DataGridTextColumn Header="Lợi nhuận" Binding="{Binding Profit, StringFormat={}{0:N0} VNĐ}" Width="1.2*" SortDirection="Descending" ElementStyle="{StaticResource CenterCellStyle}">
                     <DataGridTextColumn.CellStyle>
                         <Style TargetType="DataGridCell">
-                            <Setter Property="FontWeight" Value="Bold"/>
-                            <Setter Property="Foreground" Value="DarkGreen"/>
+                            <Setter Property="FontWeight" Value="Bold"/> <!-- Chữ in đậm. -->
+                            <Setter Property="Foreground" Value="DarkGreen"/> <!-- Chữ màu xanh lá đậm. -->
                         </Style>
                     </DataGridTextColumn.CellStyle>
                 </DataGridTextColumn>
+                <!-- Cột tỷ suất lợi nhuận, có style riêng. -->
                 <DataGridTextColumn Header="Tỷ suất (%)" Binding="{Binding ProfitMargin, StringFormat={}{0:N1}%}" Width="1*" ElementStyle="{StaticResource CenterCellStyle}">
                     <DataGridTextColumn.CellStyle>
                         <Style TargetType="DataGridCell">
-                            <Setter Property="FontWeight" Value="Bold"/>
-                            <Setter Property="Foreground" Value="DarkGreen"/>
+                            <Setter Property="FontWeight" Value="Bold"/> <!-- Chữ in đậm. -->
+                            <Setter Property="Foreground" Value="DarkGreen"/> <!-- Chữ màu xanh lá đậm. -->
                         </Style>
                     </DataGridTextColumn.CellStyle>
                 </DataGridTextColumn>

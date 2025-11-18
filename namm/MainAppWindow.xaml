@@ -1,3 +1,5 @@
+﻿<!-- File này định nghĩa cửa sổ chính của ứng dụng sau khi người dùng đăng nhập thành công. -->
+<!-- Nó chứa menu điều hướng chính và một khu vực để hiển thị các màn hình chức năng khác nhau (UserControl). -->
 <Window x:Class="namm.MainAppWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -6,24 +8,30 @@
         xmlns:local="clr-namespace:namm"
         mc:Ignorable="d"
         Title="Chương trình Quản lý Cafe" Height="600" Width="1024"
-        WindowStartupLocation="CenterScreen"> <!-- Xóa Background khỏi Window -->
-    <DockPanel> <!-- Xóa x:Name="rootPanel" -->
+        WindowStartupLocation="CenterScreen"> <!-- Cửa sổ sẽ xuất hiện ở giữa màn hình. -->
+    <!-- DockPanel là layout chính, cho phép các thành phần con "neo" vào các cạnh. -->
+    <DockPanel>
+        <!-- Menu chính của ứng dụng, được neo ở trên cùng (Dock="Top"). -->
         <Menu DockPanel.Dock="Top" FontSize="14">
+            <!-- MenuItem "Trang chủ", khi click sẽ gọi sự kiện Home_Click. Biểu tượng ngôi nhà được vẽ bằng Path. -->
             <MenuItem Click="Home_Click" ToolTip="Quay về màn hình chính">
                 <MenuItem.Header>
                     <Path Data="M12 2.09954L21 10.0995V21.0001H15V15.0001H9V21.0001H3V10.0995L12 2.09954Z" 
                           Stroke="{DynamicResource {x:Static SystemColors.MenuTextBrushKey}}" StrokeThickness="1.5" Width="16" Height="16" Stretch="Uniform"/>
                 </MenuItem.Header>
             </MenuItem>
+            <!-- Menu "Hệ thống" chứa các chức năng liên quan đến tài khoản và cài đặt. -->
             <MenuItem Header="_Hệ thống" Click="TopLevelMenuItem_Click">
+                <!-- x:Name được dùng để có thể truy cập và ẩn/hiện mục menu này từ code-behind. -->
                 <MenuItem x:Name="miManageEmployees" Header="Quản lí nhân viên" Click="ManageEmployees_Click" ToolTip="Quản lý tài khoản nhân viên (chỉ dành cho Admin)."/>
                 <MenuItem Header="Đổi mật khẩu" Click="ChangePassword_Click"/>
                 <MenuItem Header="Thiết lập giao diện" Click="InterfaceSettings_Click"/>
-                <Separator/> 
+                <Separator/> <!-- Đường kẻ ngang để phân tách các nhóm chức năng. -->
                 <MenuItem x:Name="miDeleteHistory" Header="Xóa lịch sử hóa đơn" Click="DeleteHistory_Click"/>
                 <MenuItem Header="Đăng xuất" Click="Logout_Click"/>
                 <Separator/>
             </MenuItem>
+            <!-- Menu "Quản lí" chứa các chức năng quản lý danh mục cốt lõi của quán. -->
             <MenuItem Header="_Quản lí" Click="TopLevelMenuItem_Click">
                 <MenuItem Header="Quản lí bàn" Click="ManageTables_Click"/>
                 <MenuItem Header="Quản lí Đồ uống (Tổng)" Click="ManageMenu_Click" ToolTip="Quản lý danh sách đồ uống chính của quán."/>
@@ -33,6 +41,7 @@
                 <MenuItem Header="Quản lí nguyên liệu" Click="ManageMaterials_Click"/>
                 <MenuItem Header="Quản lí đơn vị tính" Click="ManageUnits_Click"/>
             </MenuItem>
+            <!-- Menu "Thống kê" chứa các chức năng báo cáo, thống kê. -->
             <MenuItem x:Name="miStatistics" Header="_Thống kê" Click="TopLevelMenuItem_Click">
                 <MenuItem x:Name="miEmployeeRevenue" Header="Doanh thu nhân viên" Click="EmployeeRevenue_Click"/>
                 <MenuItem x:Name="miProfitStatistics" Header="Thống kê lợi nhuận" Click="miProfitStatistics_Click"/>
@@ -41,6 +50,7 @@
                 <MenuItem x:Name="miInvoiceHistory" Header="Lịch sử hóa đơn" Click="InvoiceHistory_Click"/>
             </MenuItem>
         </Menu>
+        <!-- Grid này là khu vực nội dung chính. Các UserControl (màn hình) khác nhau sẽ được nạp vào đây. -->
         <Grid x:Name="MainContent" Margin="10">
             <!-- Nội dung chính của ứng dụng sẽ được hiển thị ở đây -->
         </Grid>

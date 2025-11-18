@@ -5,11 +5,16 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="Chọn màu" Height="300" Width="400" <!-- Tiêu đề, chiều cao, chiều rộng của cửa sổ. -->
-        WindowStartupLocation="CenterScreen" <!-- Cửa sổ sẽ hiện ở giữa màn hình. -->
-        ResizeMode="NoResize" <!-- Không cho phép người dùng thay đổi kích thước cửa sổ. -->
-        Loaded="Window_Loaded" <!-- Sự kiện được gọi khi cửa sổ tải xong. -->
-        FontFamily="Segoe UI"> <!-- Font chữ chung cho cửa sổ. -->
+        Title="Chọn màu" Height="300" Width="400"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        Loaded="Window_Loaded"
+        FontFamily="Segoe UI">
+    <!-- Tiêu đề, chiều cao, chiều rộng của cửa sổ. -->
+    <!-- Cửa sổ sẽ hiện ở giữa màn hình. -->
+    <!-- Không cho phép người dùng thay đổi kích thước cửa sổ. -->
+    <!-- Sự kiện được gọi khi cửa sổ tải xong. -->
+    <!-- Font chữ chung cho cửa sổ. -->
     <!-- Layout chính, chia không gian thành các hàng và cột. -->
     <Grid Margin="15">
         <!-- Định nghĩa các hàng cho layout. -->

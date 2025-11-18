@@ -1,67 +1,85 @@
-<UserControl x:Class="namm.RecipeView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+﻿<!-- Đây là file định nghĩa giao diện người dùng (UI) cho chức năng quản lý Công thức đồ uống. -->
+<UserControl x:Class="namm.RecipeView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:namm"
              mc:Ignorable="d" 
              d:DesignHeight="550" d:DesignWidth="1000"
-             Loaded="UserControl_Loaded">
+             Loaded="UserControl_Loaded"> <!-- Sự kiện Loaded sẽ được gọi khi control này được tải xong. -->
+    <!-- Grid là layout chính, chia không gian thành các hàng và cột. Margin="10" tạo khoảng cách 10 pixel xung quanh. -->
     <Grid Margin="10">
+        <!-- Định nghĩa các tài nguyên (ví dụ: Style) có thể tái sử dụng trong Grid này. -->
         <Grid.Resources>
+            <!-- Style để căn giữa nội dung của tiêu đề cột trong DataGrid. -->
             <Style x:Key="CenterAlignedColumnHeader" TargetType="DataGridColumnHeader">
                 <Setter Property="HorizontalContentAlignment" Value="Center"/>
             </Style>
+            <!-- Style để căn giữa nội dung của các ô TextBlock. -->
             <Style x:Key="CenterAlignedCell" TargetType="TextBlock">
                 <Setter Property="HorizontalAlignment" Value="Center"/>
             </Style>
         </Grid.Resources>
+        <!-- Chia Grid thành 2 cột. Cột trái rộng 350, cột phải chiếm phần còn lại (*). -->
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="350"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <!-- Cột 1: Chọn đồ uống và thiết lập công thức -->
+        <!-- Cột 0 (bên trái): Chứa form để chọn đồ uống và thiết lập công thức cho nó. -->
+        <!-- DockPanel cho phép neo các phần tử vào các cạnh. -->
         <DockPanel Grid.Column="0" Margin="0,0,10,0">
+            <!-- Tiêu đề của cột, được neo ở trên cùng. -->
             <TextBlock DockPanel.Dock="Top" Text="THIẾT LẬP CÔNG THỨC" FontSize="18" FontWeight="Bold" Margin="0,0,0,10"/>
+            <!-- StackPanel sắp xếp các phần tử con theo chiều dọc. -->
             <StackPanel>
                 <TextBlock Text="Chọn đồ uống pha chế:" Margin="0,5,0,2"/>
+                <!-- ComboBox để người dùng chọn đồ uống. DisplayMemberPath="Name" hiển thị cột 'Name' của dữ liệu. SelectedValuePath="ID" sử dụng cột 'ID' làm giá trị thực sự. -->
                 <ComboBox x:Name="cbDrink" Padding="5" DisplayMemberPath="Name" SelectedValuePath="ID"
                           SelectionChanged="CbDrink_SelectionChanged"
                           ToolTip="Chọn đồ uống để xem hoặc sửa công thức"/>
 
                 <TextBlock Text="Mã kiểu đồ uống:" Margin="0,10,0,2"/>
+                <!-- TextBox chỉ đọc, hiển thị mã đồ uống pha chế (ví dụ: caphesua_PC). -->
                 <TextBox x:Name="txtDrinkCode" Padding="5" IsReadOnly="True" Background="#EEEEEE" ToolTip="Mã này được tạo tự động"/>
 
+                <!-- Grid nhỏ để sắp xếp các control thêm nguyên liệu. -->
                 <Grid Margin="0,20,0,0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="100"/>
-                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/> <!-- Cột cho ComboBox nguyên liệu. -->
+                        <ColumnDefinition Width="100"/> <!-- Cột cho ô nhập số lượng. -->
+                        <ColumnDefinition Width="Auto"/> <!-- Cột cho nút "Thêm". -->
                     </Grid.ColumnDefinitions>
 
+                    <!-- Tiêu đề cho các cột trong Grid nhỏ này. -->
                     <TextBlock Grid.Row="0" Grid.Column="0" Text="Nguyên liệu" FontWeight="Bold"/>
                     <TextBlock Grid.Row="0" Grid.Column="1" Text="Số lượng" FontWeight="Bold" HorizontalAlignment="Center"/>
 
+                    <!-- Các control để thêm nguyên liệu vào công thức. -->
                     <ComboBox x:Name="cbMaterial" Grid.Row="1" Grid.Column="0" Margin="0,5,5,5" DisplayMemberPath="Name" SelectedValuePath="ID"/>
                     <TextBox x:Name="txtQuantity" Grid.Row="1" Grid.Column="1" Margin="0,5,5,5" VerticalContentAlignment="Center"/>
                     <Button x:Name="btnAddIngredient" Grid.Row="1" Grid.Column="2" Content="Thêm" Width="50" Margin="0,5,0,5" Click="BtnAddIngredient_Click"/>
                 </Grid>
 
                 <TextBlock Text="Nguyên liệu trong công thức:" Margin="0,15,0,5" FontWeight="Bold"/>
+                <!-- Bảng (DataGrid) hiển thị danh sách các nguyên liệu trong công thức đang được chỉnh sửa. -->
                 <DataGrid x:Name="dgCurrentRecipe" AutoGenerateColumns="False" CanUserAddRows="False" MaxHeight="150"
                           HeadersVisibility="Column">
                     <DataGrid.Columns>
+                        <!-- Định nghĩa các cột cho DataGrid. Binding được dùng để liên kết cột với thuộc tính trong đối tượng RecipeIngredient. -->
                         <DataGridTextColumn Header="Nguyên liệu" Binding="{Binding MaterialName}" Width="2.5*" HeaderStyle="{StaticResource CenterAlignedColumnHeader}" ElementStyle="{StaticResource CenterAlignedCell}"/>
-                        <DataGridTextColumn Header="Số lượng" Binding="{Binding Quantity, StringFormat=G29}" Width="1.5*" HeaderStyle="{StaticResource CenterAlignedColumnHeader}" ElementStyle="{StaticResource CenterAlignedCell}"/>
+                        <DataGridTextColumn Header="Số lượng" Binding="{Binding Quantity, StringFormat=G29}" Width="1.5*" HeaderStyle="{StaticResource CenterAlignedColumnHeader}" ElementStyle="{StaticResource CenterAlignedCell}"/> <!-- StringFormat=G29 để loại bỏ các số 0 không cần thiết ở phần thập phân. -->
                         <DataGridTextColumn Header="Đơn vị" Binding="{Binding UnitName}" Width="1*" HeaderStyle="{StaticResource CenterAlignedColumnHeader}" ElementStyle="{StaticResource CenterAlignedCell}"/>
+                        <!-- Cột chứa nút "Xóa" cho mỗi nguyên liệu. -->
                         <DataGridTemplateColumn Header="Xóa" Width="Auto" HeaderStyle="{StaticResource CenterAlignedColumnHeader}">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
+                                    <!-- CommandParameter="{Binding}" truyền toàn bộ đối tượng RecipeIngredient của dòng đó vào sự kiện Click. -->
                                     <Button Content="Xóa" Click="DeleteIngredient_Click" CommandParameter="{Binding}" Padding="5,2"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
@@ -69,47 +87,55 @@
                     </DataGrid.Columns>
                 </DataGrid>
 
+                <!-- Hiển thị tổng chi phí nguyên liệu cho công thức hiện tại. -->
                 <TextBlock x:Name="txtCurrentRecipeCost" Text="Tổng chi phí: 0" HorizontalAlignment="Right" Margin="0,5,0,0" FontWeight="Bold" FontSize="14"/>
 
                 <TextBlock Text="Giá bán cho khách:" Margin="0,10,0,2"/>
                 <TextBox x:Name="txtActualPrice" Padding="5"/>
 
+                <!-- Grid chứa các nút chức năng chính. -->
                 <Grid Margin="0,15,0,0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
+                    <!-- Nút "Lưu công thức" để lưu các thay đổi vào CSDL. -->
                     <Button Grid.Row="0" x:Name="btnSaveRecipe" Content="Lưu công thức" Width="140" HorizontalAlignment="Center" Margin="0,0,0,5" Click="BtnSaveRecipe_Click"/>
+                    <!-- Nút "Ẩn/Hiện Công thức" để thay đổi trạng thái hoạt động của công thức. -->
                     <Button Grid.Row="1" x:Name="btnToggleRecipeActive" Content="Ẩn/Hiện Công thức" Width="140" HorizontalAlignment="Center" Margin="0,5,0,5" Click="BtnToggleRecipeActive_Click" IsEnabled="False" Background="#FFC107" Foreground="Black"/>
+                    <!-- Nút "Gỡ công thức" để xóa hoàn toàn công thức khỏi đồ uống. -->
                     <Button Grid.Row="2" x:Name="btnRemoveRecipe" Content="Gỡ công thức" Width="140" HorizontalAlignment="Center" Margin="0,5,0,0" Click="BtnRemoveRecipe_Click" Background="#DC3545" Foreground="White"/>
                 </Grid>
             </StackPanel>
         </DockPanel>
 
-        <!-- Cột 2: Danh sách nguyên liệu trong công thức -->
+        <!-- Cột 1 (bên phải): Chứa bảng tóm tắt tất cả các công thức đã có trong hệ thống. -->
         <DockPanel Grid.Column="1">
             <TextBlock DockPanel.Dock="Top" Text="TỔNG HỢP CÔNG THỨC" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+            <!-- Bảng (DataGrid) hiển thị danh sách tóm tắt các công thức. -->
             <DataGrid x:Name="dgRecipeSummary" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False"
                       HeadersVisibility="Column" SelectionMode="Single"
                       SelectionChanged="DgRecipeSummary_SelectionChanged">
                 <DataGrid.Columns>
+                    <!-- Định nghĩa các cột cho DataGrid. Binding được dùng để liên kết cột với thuộc tính trong dữ liệu. -->
                     <DataGridTextColumn Header="STT" Binding="{Binding STT}" Width="0.5*" HeaderStyle="{StaticResource CenterAlignedColumnHeader}" ElementStyle="{StaticResource CenterAlignedCell}"/>
                     <DataGridTextColumn Header="Đồ uống pha chế" Binding="{Binding DrinkName}" Width="1.5*" HeaderStyle="{StaticResource CenterAlignedColumnHeader}" ElementStyle="{StaticResource CenterAlignedCell}"/>
-                    <DataGridTextColumn Header="Nguyên liệu" Binding="{Binding RecipeSummary}" Width="3*" HeaderStyle="{StaticResource CenterAlignedColumnHeader}" ElementStyle="{StaticResource CenterAlignedCell}"/>
-                    <DataGridTextColumn Header="Chi phí" Binding="{Binding TotalCost, StringFormat={}{0:N0}}" Width="1*" HeaderStyle="{StaticResource CenterAlignedColumnHeader}" ElementStyle="{StaticResource CenterAlignedCell}"/>
+                    <DataGridTextColumn Header="Nguyên liệu" Binding="{Binding RecipeSummary}" Width="3*" HeaderStyle="{StaticResource CenterAlignedColumnHeader}" ElementStyle="{StaticResource CenterAlignedCell}"/> <!-- Hiển thị chuỗi tóm tắt công thức. -->
+                    <DataGridTextColumn Header="Chi phí" Binding="{Binding TotalCost, StringFormat={}{0:N0}}" Width="1*" HeaderStyle="{StaticResource CenterAlignedColumnHeader}" ElementStyle="{StaticResource CenterAlignedCell}"/> <!-- StringFormat={}{0:N0} để định dạng số có dấu phẩy. -->
                     <DataGridTextColumn Header="Giá bán" Binding="{Binding ActualPrice, StringFormat={}{0:N0}}" Width="1*" HeaderStyle="{StaticResource CenterAlignedColumnHeader}" ElementStyle="{StaticResource CenterAlignedCell}"/>
                     <DataGridTextColumn Header="Trạng thái" Binding="{Binding RecipeStatus}" Width="1*" HeaderStyle="{StaticResource CenterAlignedColumnHeader}" ElementStyle="{StaticResource CenterAlignedCell}"/>
-                    <DataGridTextColumn Header="Có thể làm" Binding="{Binding MaxCanMake}" Width="1*" HeaderStyle="{StaticResource CenterAlignedColumnHeader}" ElementStyle="{StaticResource CenterAlignedCell}"/>
+                    <DataGridTextColumn Header="Có thể làm" Binding="{Binding MaxCanMake}" Width="1*" HeaderStyle="{StaticResource CenterAlignedColumnHeader}" ElementStyle="{StaticResource CenterAlignedCell}"/> <!-- Số lượng tối đa có thể pha chế dựa trên tồn kho. -->
                 </DataGrid.Columns>
             </DataGrid>
         </DockPanel>
 
-        <!-- Popup for notifications -->
+        <!-- Popup để hiển thị các thông báo nhanh (ví dụ: "Đã thêm thành công"). -->
         <Popup x:Name="notificationPopup"
                Placement="Center"
                AllowsTransparency="True"
                PopupAnimation="Fade">
+            <!-- Border để tạo nền và bo góc cho popup. -->
             <Border Background="#333333" CornerRadius="5" Padding="15,10">
                 <TextBlock x:Name="notificationText" Foreground="White" FontSize="14"/>
             </Border>
